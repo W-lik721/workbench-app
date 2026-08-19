@@ -516,7 +516,7 @@ function renderStatus(){
   [['ollama','http://localhost:11434'],['pages','https://w-lik721.github.io/workbench-app/index.html'],['ext','https://www.douyin.com']].forEach(([k,u])=>{
     chkOne(u).then(ok=>{const el=list.querySelector('[data-k="'+k+'"]');if(!el)return;
       el.querySelector('.bd').style.background=ok?'var(--ok)':'var(--warn)';
-      el.querySelector('span').innerHTML=ok?'可访问 · '+new Date().toTimeString().slice(0,5):'当前不通'});
+      el.querySelector('.c span').innerHTML=ok?'可访问 · '+new Date().toTimeString().slice(0,5):'当前不通'});
   });
   if(navigator.getBattery){navigator.getBattery().then(b=>{
     const el=list.querySelector('[data-k="batt"]');if(!el)return;
@@ -524,7 +524,7 @@ function renderStatus(){
     const mode=b.charging?'充电中':'用电池';
     const t=b.charging?b.chargingTime:b.dischargingTime;
     const left=isFinite(t)&&t>0?Math.ceil(t/60)+' 分钟':'—';
-    el.querySelector('span').textContent=level+' · '+mode+(left!=='—'?' · 约剩 '+left:'');
+    el.querySelector('.c span').textContent=level+' · '+mode+(left!=='—'?' · 约剩 '+left:'');
     el.querySelector('.bd').style.background=b.level>0.2?'var(--ok)':'var(--warn)';
   }).catch(()=>{})}
 }
