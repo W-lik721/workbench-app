@@ -182,6 +182,38 @@ table.sched .w{display:block;font-size:11px;color:var(--ink3);margin-top:2px}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 html[data-theme=dark] #toast{background:var(--card);color:var(--ink);border:1px solid var(--line2)}
 
+.tool-panel{display:flex;flex-direction:column;gap:10px;min-width:0}
+.toolrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.toolgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kv{font-size:12.5px;padding:8px 10px;background:var(--bg2);border-radius:8px;word-break:break-all}
+.kv b{display:block;font-size:11px;color:var(--ink3);font-weight:500;margin-bottom:2px}
+.inp{padding:8px 11px;border:1px solid var(--line2);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:13px}
+.inp:focus{outline:none;border-color:var(--brand)}
+.trans-big{font-size:18px;font-weight:700;color:var(--brand);font-variant-numeric:tabular-nums;word-break:break-all}
+.toolchip{font-size:12px;padding:6px 13px;border:1px solid var(--line2);border-radius:8px;background:transparent;color:var(--ink2);cursor:pointer}
+.toolchip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+html[data-theme=dark] .toolchip.on{color:#0c1016}
+.collect .clk{flex:1;min-width:0}
+.collect .clk a{color:var(--ink);font-weight:600}
+.collect .clk a:hover{color:var(--brand)}
+.collect .clk small{display:block;font-size:11px;color:var(--ink3);margin-top:2px}
+.catdot{width:8px;height:8px;border-radius:50%;flex:none}
+h4.sec{font-size:12px;letter-spacing:1.5px;color:var(--ink3);margin:2px 0}
+.week-axis{display:flex;flex-direction:column;gap:4px;max-height:310px;overflow:auto}
+.wday{font-size:12px;color:var(--ink3);letter-spacing:1px;margin-top:8px}
+.wday:first-child{margin-top:0}
+.wrow{display:flex;gap:9px;align-items:flex-start;padding:6px 2px;border-bottom:1px dashed var(--line);animation:in .25s}
+.wrow .t{flex:1;font-size:13px}
+.wrow time{font-size:10.5px;color:var(--ink3);font-variant-numeric:tabular-nums;flex:none}
+.wrow .del{border:0;background:none;color:var(--ink3);cursor:pointer;opacity:0;font-size:14px}
+.wrow:hover .del{opacity:1}
+.arch-item{border:1px solid var(--line);border-radius:8px;padding:9px 13px;background:var(--bg2);animation:in .3s}
+.arch-item summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px}
+.arch-item summary::-webkit-details-marker{display:none}
+.arch-item .amark{color:var(--brand);font-size:11px}
+.arch-body{margin-top:9px;font-size:12.5px;color:var(--ink2);line-height:1.75;white-space:pre-wrap;border-top:1px dashed var(--line);padding-top:8px}
+.arch-body small{display:block;color:var(--ink3);font-size:11px;margin-bottom:4px}
+
 footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px;padding-top:30px;letter-spacing:.5px}
 
 @media(max-width:960px){
@@ -231,7 +263,10 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
     <a href="#feed"><span class="n">05</span>动态 <span class="dot">·</span></a>
     <a href="#links"><span class="n">06</span>常去 <span class="dot">·</span></a>
     <a href="#sched"><span class="n">07</span>课程 <span class="dot">·</span></a>
-    <a href="#sync"><span class="n">08</span>云同步 <span class="dot">·</span></a>
+    <a href="#tools"><span class="n">08</span>工具 <span class="dot">·</span></a>
+    <a href="#collect"><span class="n">09</span>收藏 <span class="dot">·</span></a>
+    <a href="#week"><span class="n">10</span>日程 <span class="dot">·</span></a>
+    <a href="#sync"><span class="n">11</span>云同步 <span class="dot">·</span></a>
   </nav>
 
   <div>
@@ -326,9 +361,87 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
         <div id="schedArea"></div>
       </section>
 
+      <!-- 实用工具箱 -->
+      <section class="card" id="tools">
+        <h3><span class="idx">08</span>实用工具箱<span class="ctrl"><button class="chip" id="toolCopy">复制结果</button></span></h3>
+        <div class="tabs" id="toolTabs">
+          <button class="on" data-t="color">取色</button>
+          <button data-t="conv">换算</button>
+          <button data-t="cipher">加密</button>
+          <button data-t="board">拼写板</button>
+          <button data-t="count">字数</button>
+        </div>
+
+        <div class="tool-panel" data-p="color">
+          <div class="toolrow">
+            <input type="color" id="tColor" value="#4c7fd0" style="width:64px;height:40px;border:1px solid var(--line2);border-radius:8px;background:none;cursor:pointer">
+            <span class="trans-big" id="tColorHex">#4c7fd0</span>
+          </div>
+          <div class="toolgrid" id="tColorInfo"></div>
+        </div>
+
+        <div class="tool-panel" data-p="conv" hidden>
+          <select id="tCat" class="inp" style="width:100%">
+            <option value="length">长度</option><option value="weight">重量</option>
+            <option value="temp">温度</option><option value="data">数据量</option>
+            <option value="speed">网速</option>
+          </select>
+          <div class="toolrow">
+            <input id="tVal" class="inp" style="flex:1" value="1">
+            <select id="tFrom" class="inp"></select>
+            <span style="color:var(--ink3)">→</span>
+            <select id="tTo" class="inp"></select>
+          </div>
+          <div class="trans-big" id="tCnvRes">—</div>
+        </div>
+
+        <div class="tool-panel" data-p="cipher" hidden>
+          <div class="toolrow">
+            <span class="toolchip on" id="cDir" data-d="enc">加密</span>
+            <span style="font-size:11px;color:var(--ink3)">base64 双向，防眼杂、非安全加密</span>
+          </div>
+          <textarea id="cInp" class="inp" style="width:100%;min-height:66px" placeholder="要加密 / 解密的文本…"></textarea>
+          <div class="toolrow"><button class="btn" id="cRun">处理</button><span id="cOut" class="trans-big" style="font-size:13px;word-break:break-all"></span></div>
+        </div>
+
+        <div class="tool-panel" data-p="board" hidden>
+          <textarea id="tBoard" class="inp" style="width:100%;min-height:120px" placeholder="临时书写板，自动存本机，不会丢…"></textarea>
+          <div class="toolrow"><button class="btn ghost" id="boardClear">清空</button></div>
+        </div>
+
+        <div class="tool-panel" data-p="count" hidden>
+          <textarea id="tCount" class="inp" style="width:100%;min-height:110px" placeholder="把文字粘贴进来…"></textarea>
+          <div class="toolgrid" id="tCountInfo"></div>
+        </div>
+      </section>
+
+      <!-- 稍后读 收藏 -->
+      <section class="card" id="collect">
+        <h3><span class="idx">09</span>稍后读 · 收藏<span class="ctrl"><select id="colFilter" class="inp" style="font-size:12px;padding:3px 8px"><option value="all">全部分类</option></select></span></h3>
+        <div class="inputrow"><input id="colTitle" placeholder="标题"></div>
+        <div class="inputrow" style="margin-top:8px">
+          <input id="colUrl" placeholder="链接（可空）">
+          <select id="colCat" class="inp"><option value="灵感">灵感</option><option value="阅读">阅读</option><option value="工具">工具</option><option value="资源">资源</option></select>
+          <button class="btn" id="colAdd">收下</button>
+        </div>
+        <div class="inputrow" style="margin-top:8px"><input id="colNote" placeholder="为什么值得存（可空）"></div>
+        <div class="list collect" id="colList" style="max-height:270px"></div>
+        <div class="rowfoot"><span id="colCount"></span><span>存下先不看的，回头再看</span></div>
+      </section>
+
+      <!-- 日程 · 周复盘 -->
+      <section class="card wide" id="week">
+        <h3><span class="idx">10</span>日程 · 周复盘<span class="ctrl"><button class="chip" id="weekGoToday">跳今天</button></span></h3>
+        <div class="inputrow"><input id="weekInp" placeholder="今天做了啥，随手记一条"><button class="btn" id="weekAdd">记一条</button></div>
+        <div class="week-axis" id="weekAxis"></div>
+        <h4 class="sec">周小结 · 存进复盘</h4>
+        <div class="inputrow"><input id="weekNote" placeholder="这周整体小结（可空）"><button class="btn ghost" id="weekArchive">存为复盘</button></div>
+        <div class="archives" id="archList" style="display:flex;flex-direction:column;gap:8px"></div>
+      </section>
+
       <!-- 云同步 -->
       <section class="card wide" id="sync">
-        <h3><span class="idx">08</span>云同步<span class="ctrl"><button class="chip" id="syncTest">测试连接</button></span></h3>
+        <h3><span class="idx">11</span>云同步<span class="ctrl"><button class="chip" id="syncTest">测试连接</button></span></h3>
         <p style="color:var(--ink3);font-size:12.5px">数据存在私有仓库的 <code>data.json</code>。备份=把本机传上去；拉取=把云端拿下来；改动会在本机缓存，方便离线用。</p>
         <div class="syncbox">
           <div class="sync-meta">
@@ -567,12 +680,163 @@ $('#syncTest').onclick=async()=>{setStatus('连接中…');try{
   const m=await ghGetMeta();setStatus('连接正常，云端当前'+(m?'已有数据（备份会覆盖它）':'暂无数据（首次备份会创建）'),'ok')}catch(e){setStatus(e.message,'err')}};
 function pingPush(){/* 清理占位，无操作 */}
 
+/* ---------- 实用工具箱 ---------- */
+(()=>{
+  const tabs=document.getElementById('toolTabs');
+  const panels=document.querySelectorAll('#tools .tool-panel');
+  tabs.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    tabs.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+    panels.forEach(p=>p.hidden=p.dataset.p!==b.dataset.t)});
+  /* 取色 */
+  const tc=document.getElementById('tColor');
+  function hexInfo(h){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);
+    const mx=Math.max(r,g,b)/255,mn=Math.min(r,g,b)/255,l=(mx+mn)/2;let hh=0,ss=0;
+    if(mx!==mn){const d=mx-mn;ss=l>.5?d/(2-mx-mn):d/(mx+mn);
+      const rr=r/255,gg=g/255,bb=b/255;
+      hh=mx===rr?(gg-bb)/d:mx===gg?2+(bb-rr)/d:4+(rr-gg)/d;hh*=60;if(hh<0)hh+=360}
+    return {r,g,b,h:Math.round(hh),s:Math.round(ss*100),l:Math.round(l*100)}}
+  function colorUI(){const v=tc.value;const o=hexInfo(v);
+    document.getElementById('tColorHex').textContent=v;
+    document.getElementById('tColorInfo').innerHTML=
+      `<div class="kv"><b>HEX</b>${v}</div>`+
+      `<div class="kv"><b>RGB</b>${o.r}, ${o.g}, ${o.b}</div>`+
+      `<div class="kv"><b>HSL</b>${o.h}° ${o.s}% ${o.l}%</div>`+
+      `<div class="kv"><b>预览</b><span style="display:inline-block;width:26px;height:14px;background:${v};border:1px solid var(--line2);border-radius:3px;vertical-align:middle"></span></div>`}
+  tc.addEventListener('input',colorUI);colorUI();
+
+  /* 换算 */
+  const UNITS={
+    length:{米:1,'千米':1000,'厘米':0.01,'毫米':0.001,'英里':1609.344,'英尺':0.3048,'英寸':0.0254,'尺':0.3333},
+    weight:{'kg':1,'g':0.001,'mg':1e-6,'吨':1000,'斤':0.5,'磅':0.4536,'盎司':0.02835},
+    data:{B:1,KB:1024,MB:1048576,GB:1073741824,TB:1099511627776},
+    speed:{'MB/s':1,'MBit/s':8,'GB/s':1024,'KB/s':1/1024}};
+  function toc(v,u){return u==='C'?v:u==='F'?(v-32)*5/9:v-273.15}
+  function cto(c,u){return u==='C'?c:u==='F'?c*9/5+32:c+273.15}
+  function convUnits(v,cat,from,to){if(cat==='temp')return cto(toc(v,from),to);return v*UNITS[cat][from]/UNITS[cat][to]}
+  function fillUnits(){const cat=document.getElementById('tCat').value;
+    const keys=cat==='temp'?['C','F','K']:Object.keys(UNITS[cat]);
+    const f=document.getElementById('tFrom'),t=document.getElementById('tTo');
+    f.innerHTML='';t.innerHTML='';keys.forEach(k=>{f.add(new Option(k,k));t.add(new Option(k,k))});
+    if(keys.length>1)t.selectedIndex=Math.min(1,keys.length-1);convUI()}
+  function convUI(){const v=parseFloat(document.getElementById('tVal').value);
+    if(isNaN(v)){document.getElementById('tCnvRes').textContent='—';return}
+    const cat=document.getElementById('tCat').value;
+    const r=convUnits(v,cat,document.getElementById('tFrom').value,document.getElementById('tTo').value);
+    document.getElementById('tCnvRes').textContent=Number.isFinite(r)&&r!==0?Number(r.toPrecision(8)).toString():'—'}
+  document.getElementById('tCat').addEventListener('change',fillUnits);
+  document.getElementById('tFrom').addEventListener('change',convUI);
+  document.getElementById('tTo').addEventListener('change',convUI);
+  document.getElementById('tVal').addEventListener('input',convUI);fillUnits();
+
+  /* 加密 base64 */
+  const cd=document.getElementById('cDir');
+  cd.onclick=()=>{cd.dataset.d=cd.dataset.d==='enc'?'dec':'enc';cd.textContent=cd.dataset.d==='enc'?'加密':'解密';
+    cd.classList.toggle('on',cd.dataset.d==='enc')};
+  document.getElementById('cRun').onclick=()=>{const v=document.getElementById('cInp').value;const out=document.getElementById('cOut');
+    if(!v){toast('先输入要处理的文本');return}
+    try{const r=cd.dataset.d==='enc'?btoa(unescape(encodeURIComponent(v))):decodeURIComponent(escape(atob(v.trim())));
+      out.textContent=r;if(navigator.clipboard)navigator.clipboard.writeText(r)}catch(e){out.textContent='内容不对，换个试试'}};
+
+  /* 拼写板 */
+  const pb=document.getElementById('tBoard');
+  pb.value=ls.get('board','');
+  pb.addEventListener('input',()=>ls.set('board',pb.value));
+  document.getElementById('boardClear').onclick=()=>{pb.value='';ls.set('board','');toast('拼写板清空了')};
+
+  /* 字数 */
+  function countUI(){const s=document.getElementById('tCount').value;
+    const cn=(s.match(/[\u4e00-\u9fa5]/g)||[]).length;
+    const en=(s.match(/[A-Za-z]/g)||[]).length;
+    const w=(s.trim().match(/\S+/g)||[]).length;
+    const ln=s.length?s.split(/\n/).length:0;
+    document.getElementById('tCountInfo').innerHTML=
+      `<div class="kv"><b>总字符</b>${s.length}</div>`+
+      `<div class="kv"><b>不含空格</b>${s.replace(/\s/g,'').length}</div>`+
+      `<div class="kv"><b>汉字</b>${cn}</div>`+
+      `<div class="kv"><b>字母</b>${en}</div>`+
+      `<div class="kv"><b>词数</b>${w}</div>`+
+      `<div class="kv"><b>行数</b>${ln}</div>`}
+  document.getElementById('tCount').addEventListener('input',countUI);countUI();
+
+  /* 复制当前工具结果 */
+  document.getElementById('toolCopy').onclick=()=>{const t=document.querySelector('#toolTabs button.on').dataset.t;
+    const el={color:'#tColorHex',conv:'#tCnvRes',cipher:'#cOut',board:'#tBoard'}[t];
+    const wrap={board:{get el(){return document.getElementById('tBoard')},val:e=>e.value},
+      def:{get el(){return document.querySelector(el)||null},val:e=>e.textContent}};
+    const use=t==='board'?wrap.board:wrap.def;const node=use.el;if(!node||!node.value&&!node.textContent){toast('这里没可复制的');return}
+    const v=use.val(node);if(navigator.clipboard)navigator.clipboard.writeText(v).then(()=>toast('已复制'),()=>toast('已复制'));
+    else toast('已复制')};
+})();
+
+/* ---------- 稍后读 · 收藏 ---------- */
+const CATS={灵感:'#6a4e8f',阅读:'#2d6a5f',工具:'#b0544f',资源:'#33658a'};
+function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+let cols=ls.get('col',[]);
+function colOk(){const f=document.getElementById('colFilter');f.innerHTML='<option value="all">全部分类</option>';
+  [...new Set(cols.map(c=>c.cat))].forEach(c=>f.add(new Option(c,c)));f.value=f.value||'all'}
+function renderCol(){const list=document.getElementById('colList');const filt=document.getElementById('colFilter').value;
+  list.innerHTML='';const shows=cols.filter(c=>filt==='all'||c.cat===filt);
+  shows.forEach((c,i)=>{const li=document.createElement('li');
+    li.innerHTML=`<span class="catdot" style="background:${CATS[c.cat]||'#999'}"></span>`+
+      `<span class="clk"><a href="${c.url?esc(c.url):'#'}" ${c.url?'target="_blank" rel="noopener"':''}>${esc(c.title)}</a>`+
+      (c.note?`<small>${esc(c.note)}</small>`:'')+`</span>`+
+      `<time style="font-size:10.5px;color:var(--ink3);flex:none">${c.t}</time>`+
+      `<button class="del" title="删除">✕</button>`;
+    li.querySelector('.del').onclick=()=>{cols.splice(i,1);ls.set('col',cols);colOk();renderCol();toast('删了')};
+    list.appendChild(li)});
+  document.getElementById('colCount').textContent=`共 ${cols.length} 条`}
+function addCol(){const title=document.getElementById('colTitle').value.trim();if(!title){toast('先填个标题');return}
+  cols.unshift({title,url:document.getElementById('colUrl').value.trim(),cat:document.getElementById('colCat').value,
+    note:document.getElementById('colNote').value.trim(),
+    t:new Date().toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})});
+  document.getElementById('colTitle').value='';document.getElementById('colUrl').value='';document.getElementById('colNote').value='';
+  ls.set('col',cols);colOk();renderCol();toast('收下了')}
+document.getElementById('colAdd').onclick=addCol;
+document.getElementById('colTitle').addEventListener('keydown',e=>{if(e.key==='Enter')addCol()});
+document.getElementById('colFilter').addEventListener('change',renderCol);
+
+/* ---------- 日程 · 周复盘 ---------- */
+let wlog=ls.get('week',[]);
+let arch=ls.get('arch',[]);
+function wdCN(ds){const d=new Date(ds+'T00:00:00');return ['周日','周一','周二','周三','周四','周五','周六'][d.getDay()]}
+function weekStart(){const d=new Date(todayKey+'T00:00:00');d.setDate(d.getDate()-((d.getDay()+6)%7));return d}
+function renderWeek(){const box=document.getElementById('weekAxis');
+  const mon=weekStart();let html='';
+  for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);
+    const ds=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+    const items=wlog.filter(x=>x.d===ds);
+    if(!items.length&&ds!==todayKey)continue;
+    html+=`<div class="wday">${ds.slice(5).replace('-','/')} ${wdCN(ds)}${ds===todayKey?' · 今天':''}</div>`;
+    items.forEach(it=>{html+=`<div class="wrow"><span class="catdot" style="background:var(--brand);width:6px;height:6px"></span><span class="t">${esc(it.tx)}</span><time>${it.t||''}</time><button class="del" data-id="${it.id}">✕</button></div>`})}
+  if(!wlog.some(x=>x.d===todayKey)||html===''){
+    const tds=todayKey.slice(5).replace('-','/');
+    html+=`<div class="wday">${tds} ${wdCN(todayKey)} · 今天</div><div class="wrow"><span class="t" style="color:var(--ink3)">今天还没记，随手写一条。</span></div>`}
+  box.innerHTML=html;
+  box.querySelectorAll('.del').forEach(b=>b.onclick=()=>{const id=+b.dataset.id;wlog=wlog.filter(x=>x.id!==id);ls.set('week',wlog);renderWeek()})}
+document.getElementById('weekAdd').onclick=()=>{const v=document.getElementById('weekInp').value.trim();if(!v)return;
+  const n=new Date();const ds=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());
+  wlog.push({id:Date.now(),d:ds,t:pad(n.getHours())+':'+pad(n.getMinutes()),tx:v});
+  document.getElementById('weekInp').value='';ls.set('week',wlog);renderWeek();toast('记下了')};
+document.getElementById('weekInp').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('weekAdd').click()});
+document.getElementById('weekGoToday').onclick=()=>document.getElementById('weekAxis').scrollIntoView({behavior:'smooth'});
+function renderArch(){const box=document.getElementById('archList');box.innerHTML='';
+  arch.forEach(a=>{const d=document.createElement('details');d.className='arch-item';
+    d.innerHTML=`<summary><span>${a.at} · ${a.count} 条</span><span class="amark">${a.note?'已存小结':'展开 ↑'}</span></summary>`+
+      `<div class="arch-body">${a.note?`<small>小结：${esc(a.note)}</small>`:''}<small>${a.text}</small></div>`;
+    box.appendChild(d)})}
+document.getElementById('weekArchive').onclick=()=>{const note=document.getElementById('weekNote').value.trim();
+  const mon=weekStart();const ms=mon.getFullYear()+'-'+pad(mon.getMonth()+1)+'-'+pad(mon.getDate());
+  const items=wlog.filter(x=>x.d>=ms&&x.d<=todayKey);
+  if(!items.length&&!note){toast('这周还没记内容');return}
+  arch.unshift({at:ms,count:items.length,note,text:items.map(x=>`· ${x.d.slice(5).replace('-','/')} ${x.t} ${x.tx}`).join('\n')});
+  ls.set('arch',arch);renderArch();document.getElementById('weekNote').value='';toast('已存为复盘')};
+
 /* 键盘召唤搜索 */
 document.addEventListener('keydown',e=>{if(e.key==='/'&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();$('#act').scrollIntoView({behavior:'smooth'})}});
 $('#searchBtn').onclick=()=>{$('#act').scrollIntoView({behavior:'smooth'})};
 
 /* 初始化 */
-mood();renderLaunch();renderTodos();renderNotes();renderFeed();renderQuick();renderSched();pomUI();tick();
+mood();renderLaunch();renderTodos();renderNotes();renderFeed();renderQuick();renderSched();renderCol();colOk();renderWeek();renderArch();pomUI();tick();
 </script>
 </body>
 </html>
