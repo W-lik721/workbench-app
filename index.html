@@ -484,10 +484,30 @@ function renderNewsCN(){
   if(dailyLink&&!isAI)out+='<div class="empty" style="margin-top:-2px"><a href="'+esc(dailyLink)+'" target="_blank" rel="noopener">查看今日完整简报 →</a></div>';
   list.innerHTML=out;
 }
+function renderStatus(){
+  const list=$('#feedList');
+  const row=(k,label,val,ok)=>'<div class="vitem" data-k="'+k+'"><span class="bd" style="background:'+(ok===null?'var(--ink3)':(ok?'var(--ok)':'var(--warn)'))+'"></span><div class="c"><p>'+label+'</p><span>'+val+'</span></div></div>';
+  list.innerHTML=
+    row('net','网络','现在'+(navigator.onLine?'在线，可联网':'离线'),navigator.onLine)+
+    row('dev','设备','内存 '+(navigator.deviceMemory?navigator.deviceMemory+' GB':'—')+' · '+navigator.hardwareConcurrency+' 核心',null)+
+    row('tt','时钟',pad(new Date().getHours())+':'+pad(new Date().getMinutes()),null)+
+    row('ollama','本地 Ollama','检测中…',null)+
+    row('pages','线上工作台','检测中…',null)+
+    row('ext','外网连通','检测中…',null);
+  [['ollama','http://localhost:11434'],['pages','https://w-lik721.github.io/workbench-app/index.html'],['ext','https://www.douyin.com']].forEach(([k,u])=>{
+    chkOne(u).then(ok=>{const el=list.querySelector('[data-k="'+k+'"]');if(!el)return;
+      el.querySelector('.bd').style.background=ok?'var(--ok)':'var(--warn)';
+      el.querySelector('span').innerHTML=ok?'可访问 · '+new Date().toTimeString().slice(0,5):'当前不通'});
+  });
+}
+window.addEventListener('online',()=>{if(feedTab==='40')renderStatus()});
+window.addEventListener('offline',()=>{if(feedTab==='40')renderStatus()});
+setInterval(()=>{if(feedTab==='40')renderStatus()},30000);
 function renderFeed(){
   const tabs=$('#feedTabs');tabs.innerHTML='';Object.keys(FKEY).forEach(k=>{
     const b=document.createElement('button');b.textContent=FKEY[k];b.className=k===feedTab?'on':'';b.onclick=()=>{feedTab=k;renderFeed()};tabs.appendChild(b)});
   if(feedTab==='20'||feedTab==='30'){if(!dailyNews.length)load60s();else renderNewsCN();return}
+  if(feedTab==='40'){renderStatus();return}
   const list=$('#feedList');list.innerHTML='';
   (FEED[feedTab]||[]).forEach(it=>{
     const d=document.createElement('div');d.className='vitem';
