@@ -540,7 +540,7 @@ function download(name,content,type){const b=new Blob([content],{type});const a=
 
 /* ---------- 云同步 ---------- */
 const cfgKeys=['cfg_owner','cfg_repo','cfg_token'];
-cfgKeys.forEach(k=>{$(k).value=ls.get('k_'+k,'');$(k).addEventListener('input',e=>ls.set('k_'+k,e.target.value))});
+cfgKeys.forEach(k=>{const el=document.getElementById(k);el.value=ls.get('k_'+k,'');el.addEventListener('input',e=>ls.set('k_'+k,e.target.value))});
 const API='https://api.github.com';
 function ghHeaders(){const t=$('#cfg_token').value.trim();return {Authorization:`Bearer ${t}`,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}}
 const ghUrl=()=>`${API}/repos/${$('#cfg_owner').value.trim()}/${$('#cfg_repo').value.trim()}/contents/data.json`;
