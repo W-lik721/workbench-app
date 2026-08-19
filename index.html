@@ -487,10 +487,29 @@ function renderNewsCN(){
 function renderStatus(){
   const list=$('#feedList');
   const row=(k,label,val,ok)=>'<div class="vitem" data-k="'+k+'"><span class="bd" style="background:'+(ok===null?'var(--ink3)':(ok?'var(--ok)':'var(--warn)'))+'"></span><div class="c"><p>'+label+'</p><span>'+val+'</span></div></div>';
+  const ua=navigator.userAgent;
+  const vm=(ua.match(/(?:Chrome|Edg)\/([\d.]+)/)||[])[1];
+  const browser=vm?((ua.indexOf('Edg')>-1?'Edge':'Chromium')+' '+vm):'浏览器';
+  const c=navigator.connection;
+  const net=c&&c.effectiveType?c.effectiveType.toUpperCase()+' · 下行 '+(c.downlink||0)+' Mbps · 延迟 '+(c.rtt===undefined?'—':c.rtt+' ms'):'—';
+  const d=new Date();
+  const wall=d.getFullYear()+' 年 '+pad(d.getMonth()+1)+' 月 '+pad(d.getDate())+' 日';
+  const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
+  const ori=(screen.orientation&&screen.orientation.type)?(screen.orientation.type.indexOf('portrait')===0?'竖屏':'横屏'):'—';
+  const openMin=Math.max(1,Math.round(performance.now()/60000));
   list.innerHTML=
-    row('net','网络','现在'+(navigator.onLine?'在线，可联网':'离线'),navigator.onLine)+
-    row('dev','设备','内存 '+(navigator.deviceMemory?navigator.deviceMemory+' GB':'—')+' · '+navigator.hardwareConcurrency+' 核心',null)+
-    row('tt','时钟',pad(new Date().getHours())+':'+pad(new Date().getMinutes()),null)+
+    row('net','网络',navigator.onLine?'在线，可联网':'离线',navigator.onLine)+
+    row('nl','网络质量',net,null)+
+    row('sys','系统',navigator.platform||'—',null)+
+    row('lang','界面语言',navigator.language||'—',null)+
+    row('br','浏览器',browser,null)+
+    row('dev','硬件','内存 '+(navigator.deviceMemory?navigator.deviceMemory+' GB':'—')+' · '+navigator.hardwareConcurrency+' 核',null)+
+    row('scr','屏幕',innerWidth+'×'+innerHeight+' · 缩放 '+devicePixelRatio+'× · '+ori,null)+
+    row('batt','电池','读取中…',null)+
+    row('day','今天',wall+' · '+tz,null)+
+    row('tt','现在时刻',pad(new Date().getHours())+':'+pad(new Date().getMinutes()),null)+
+    row('theme','外观',theme==='dark'?'深色':'浅色',null)+
+    row('run','本页已开',openMin+' 分钟',null)+
     row('ollama','本地 Ollama','检测中…',null)+
     row('pages','线上工作台','检测中…',null)+
     row('ext','外网连通','检测中…',null);
@@ -499,6 +518,15 @@ function renderStatus(){
       el.querySelector('.bd').style.background=ok?'var(--ok)':'var(--warn)';
       el.querySelector('span').innerHTML=ok?'可访问 · '+new Date().toTimeString().slice(0,5):'当前不通'});
   });
+  if(navigator.getBattery){navigator.getBattery().then(b=>{
+    const el=list.querySelector('[data-k="batt"]');if(!el)return;
+    const level=Math.round((b.level||0)*100)+'%';
+    const mode=b.charging?'充电中':'用电池';
+    const t=b.charging?b.chargingTime:b.dischargingTime;
+    const left=isFinite(t)&&t>0?Math.ceil(t/60)+' 分钟':'—';
+    el.querySelector('span').textContent=level+' · '+mode+(left!=='—'?' · 约剩 '+left:'');
+    el.querySelector('.bd').style.background=b.level>0.2?'var(--ok)':'var(--warn)';
+  }).catch(()=>{})}
 }
 window.addEventListener('online',()=>{if(feedTab==='40')renderStatus()});
 window.addEventListener('offline',()=>{if(feedTab==='40')renderStatus()});
