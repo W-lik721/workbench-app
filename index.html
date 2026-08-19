@@ -103,8 +103,13 @@ html[data-theme=dark] .btn{color:#0c1016}
 .tabs button:last-child{border-right:0}
 .tabs button.on{background:var(--brand);color:#fff}
 html[data-theme=dark] .tabs button.on{color:#0c1016}
-#feed{display:flex;flex-direction:column;min-height:0}
-.vfeed{display:flex;flex-direction:column;gap:9px;flex:1 1 auto;min-height:140px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--ink3) 55%,transparent) transparent;padding-right:2px}
+.row02{grid-column:1 / -1;display:flex;gap:22px;align-items:stretch;margin-bottom:22px}
+.row02>.card{flex:1 1 0;min-width:0;height:auto}
+/* 专注段与动态一览：同一行，用同一固定高度做等高基准 */
+#focus{height:400px;display:flex;flex-direction:column}
+#focus>.tomato{flex:1 1 auto;min-height:0}
+#feed{height:400px;display:flex;flex-direction:column;overflow:hidden}
+#feed .vfeed{flex:1 1 0;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:9px;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--ink3) 55%,transparent) transparent;padding-right:2px}
 .vitem{display:flex;gap:10px;align-items:flex-start}
 .vitem .bd{width:7px;height:7px;border-radius:50%;margin-top:6px;flex:none}
 .vitem .c{border:1px solid var(--line);border-radius:8px;padding:8px 11px;flex:1;background:var(--bg2)}
@@ -229,6 +234,7 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
     </section>
 
     <main class="cols">
+      <div class="row02">
 
       <!-- 专注段 -->
       <section class="card" id="focus">
@@ -261,6 +267,7 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
         <div class="vfeed" id="feedList"></div>
       </section>
 
+      </div><!--/row02-->
       <!-- 实用工具箱 -->
       <section class="card" id="tools">
         <h3><span class="idx">03</span>实用工具箱<span class="ctrl"><button class="chip" id="toolCopy">复制结果</button></span></h3>
