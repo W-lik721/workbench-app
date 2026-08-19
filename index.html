@@ -211,9 +211,11 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
     <a href="#tools"><span class="n">03</span>工具 <span class="dot">·</span></a>
     <a href="#decision"><span class="n">04</span>随机 <span class="dot">·</span></a>
     <a href="#services"><span class="n">05</span>服务 <span class="dot">·</span></a>
-    <a href="#shortcuts"><span class="n">06</span>快捷键 <span class="dot">·</span></a>
-    <a href="#quotes"><span class="n">07</span>一言 <span class="dot">·</span></a>
-    <a href="#sync"><span class="n">08</span>云同步 <span class="dot">·</span></a>
+    <a href="#sysinfo"><span class="n">06</span>设备 <span class="dot">·</span></a>
+    <a href="#daily"><span class="n">07</span>今日一学 <span class="dot">·</span></a>
+    <a href="#shortcuts"><span class="n">08</span>快捷键 <span class="dot">·</span></a>
+    <a href="#quotes"><span class="n">09</span>一言 <span class="dot">·</span></a>
+    <a href="#sync"><span class="n">10</span>云同步 <span class="dot">·</span></a>
   </nav>
 
   <div>
@@ -338,21 +340,33 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
         <p style="color:var(--ink3);font-size:12px">自动每 30 秒刷新一次，切回这个标签页也会重检。只探测在不在线，不碰你数据；Ollama 得开着才亮，在别的设备上打开时本机服务是另一个机器的。</p>
       </section>
 
+      <!-- 设备信息 -->
+      <section class="card" id="sysinfo">
+        <h3><span class="idx">06</span>设备信息</h3>
+        <div class="toolgrid" id="sysInfo"></div>
+      </section>
+
+      <!-- 今日一学 -->
+      <section class="card" id="daily">
+        <h3><span class="idx">07</span>今日一学<span class="ctrl"><button class="chip" id="dNext">换一条</button></span></h3>
+        <div class="qshow" id="dShow"></div>
+      </section>
+
       <!-- 快捷键速查 -->
       <section class="card" id="shortcuts">
-        <h3><span class="idx">06</span>快捷键速查</h3>
+        <h3><span class="idx">08</span>快捷键速查</h3>
         <div class="sc-grid" id="scList"></div>
       </section>
 
       <!-- 每日一言 -->
       <section class="card" id="quotes">
-        <h3><span class="idx">07</span>每日一言<span class="ctrl"><button class="chip" id="qNext">换一句</button></span></h3>
+        <h3><span class="idx">09</span>每日一言<span class="ctrl"><button class="chip" id="qNext">换一句</button></span></h3>
         <div class="qshow" id="qShow"></div>
       </section>
 
       <!-- 云同步 -->
       <section class="card wide" id="sync">
-        <h3><span class="idx">08</span>云同步<span class="ctrl"><button class="chip" id="syncTest">测试连接</button></span></h3>
+        <h3><span class="idx">10</span>云同步<span class="ctrl"><button class="chip" id="syncTest">测试连接</button></span></h3>
         <p style="color:var(--ink3);font-size:12.5px">数据存在私有仓库的 <code>data.json</code>。备份=把本机传上去；拉取=把云端拿下来；改动会在本机缓存，方便离线用。</p>
         <div class="syncbox">
           <div class="sync-meta">
@@ -436,20 +450,46 @@ function beep(){try{const C=new (window.AudioContext||window.webkitAudioContext)
 /* ---------- 动态 ---------- */
 const FEED={
  '10':[
-  {d:'今天',type:'l',c:'本地 Ollama 正常监听，直接就能调，不用绕。'},
-  {d:'今天',type:'l',c:'工作台又顺了一点，装上就能用。'}],
- '20':[
-  {d:'今天',type:'g',c:'有可以试的新东西，回头看看值不值得装。'}],
- '30':[
+  {d:'今天',type:'l',c:'专属能力这边顺了，装上就能用，省心一点。'}],
+ '40':[
   {d:'现在',type:'r',c:'服务都挺正常。本地这块没出岔子。'}]
 };
 const FCOLS={l:['#4e7c4a',0],g:['#33658a',1],r:['#4e7c4a',0],m:['#b8860b',1]};
-const FKEY={10:'能力',20:'AI',30:'状态'};
+const FKEY={10:'能力',20:'AI',30:'新闻',40:'状态'};
 const FTYPE={l:'学习',g:'资讯',r:'运行',m:'改善'};
-let feedTab='10';
+let feedTab='20';
+
+const HN_API='https://hacker-news.firebaseio.com/v0';
+const HN_URL='https://news.ycombinator.com/item?id=';
+const AI_KEYWORDS=['ai','gpt','llm','openai','anthropic','claude','gemini','deepseek','machine learning','neural','agent','model','bard','copilot','chatgpt','diffusion'];
+let hnAI=[],hnAll=[];
+function ago(ts){const s=(Date.now()/1000-ts)|0;if(s<60)return '刚刚';if(s<3600)return (s/60|0)+' 分钟前';if(s<86400)return (s/3600|0)+' 小时前';return (s/86400|0)+' 天前'}
+function domOf(url){try{return new URL(url).hostname.replace(/^www\./,'')}catch(e){return 'Hacker News'}}
+async function translateTitle(en){en=(en||'').slice(0,300);if(!en)return en;
+  const c=ls.get('hn_t',{});if(c[en])return c[en];
+  try{const r=await fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(en)+'&langpair='+encodeURIComponent('en|zh-CN'));
+    const j=await r.json();const t=((j&&j.responseData&&j.responseData.translatedText)||'').replace(/&#\d+;/g,'').trim();
+    if(t&&t.toLowerCase()!==en.toLowerCase()){if(Object.keys(c).length>500)c={};c[en]=t;ls.set('hn_t',c);return t}}catch(e){}
+  return en}
+async function loadHN(){try{
+  const ids=await fetch(HN_API+'/topstories.json').then(r=>r.json());
+  const items=(await Promise.all(ids.slice(0,32).map(id=>fetch(HN_API+'/item/'+id+'.json').then(r=>r.json())))).filter(i=>i&&i.type==='story'&&i.title);
+  hnAll=items.slice().sort((a,b)=>b.score-a.score);
+  hnAI=items.filter(i=>AI_KEYWORDS.some(k=>i.title.toLowerCase().includes(k)));
+  if(feedTab==='20'||feedTab==='30')renderNews();
+  }catch(e){$('#feedList').innerHTML='<div class="empty">新闻暂时没拉到，稍后再看。</div>'}}
+function newsRow(it){return '<div class="vitem"><span class="bd" style="background:var(--brand)"></span><div class="c"><p><a href="'+esc(it.url||(HN_URL+it.id))+'" target="_blank" rel="noopener" data-hn="'+esc(it.title)+'">'+esc(it.title)+'</a></p><span>'+domOf(it.url)+' · '+ago(it.time)+'</span></div></div>'}
+async function renderNews(){const list=$('#feedList');const arr=feedTab==='20'?hnAI:hnAll;
+  list.innerHTML=arr.slice(0,feedTab==='20'?10:12).map(newsRow).join('')||'<div class="empty">加载中…</div>';
+  try{
+    const links=list.querySelectorAll('a[data-hn]');
+    await Promise.all(Array.from(links).slice(0,8).map(async a=>{const zh=await translateTitle(a.dataset.hn);if(zh&&zh!==a.dataset.hn)a.textContent=zh}));
+  }catch(e){}
+}
 function renderFeed(){
   const tabs=$('#feedTabs');tabs.innerHTML='';Object.keys(FKEY).forEach(k=>{
     const b=document.createElement('button');b.textContent=FKEY[k];b.className=k===feedTab?'on':'';b.onclick=()=>{feedTab=k;renderFeed()};tabs.appendChild(b)});
+  if(feedTab==='20'||feedTab==='30'){renderNews();if(!hnAll.length)loadHN();return}
   const list=$('#feedList');list.innerHTML='';
   (FEED[feedTab]||[]).forEach(it=>{
     const d=document.createElement('div');d.className='vitem';
@@ -592,15 +632,56 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)runSvc()})
 
 /* ---------- 快捷键速查 ---------- */
 const SHORTCUTS=[
+ {k:'Ctrl + C',a:'复制'},{k:'Ctrl + V',a:'粘贴'},
+ {k:'Ctrl + X',a:'剪切'},{k:'Ctrl + Z',a:'撤销'},
+ {k:'Ctrl + Y',a:'重做'},{k:'Ctrl + S',a:'保存当前页'},
  {k:'Ctrl + T',a:'新标签页'},{k:'Ctrl + W',a:'关当前标签'},
- {k:'Ctrl + Shift + T',a:'恢复刚关的标签'},{k:'Ctrl + L',a:'定位地址栏'},
+ {k:'Ctrl + Shift + T',a:'恢复刚关的标签'},{k:'Ctrl + Tab',a:'切到下一个标签'},
+ {k:'Ctrl + 1~8',a:'跳到第 N 个标签'},{k:'Ctrl + L',a:'定位地址栏'},
  {k:'Ctrl + F',a:'页内查找'},{k:'Ctrl + D',a:'收藏当前页'},
  {k:'Ctrl + Shift + N',a:'无痕窗口'},{k:'Ctrl + R',a:'刷新'},
  {k:'Alt + ←',a:'后退'},{k:'Alt + →',a:'前进'},
- {k:'Win + D',a:'回桌面'},{k:'Win + L',a:'锁屏'}
+ {k:'Ctrl + Home',a:'回到页顶'},{k:'Ctrl + End',a:'跳到页底'},
+ {k:'Ctrl + Shift + Esc',a:'打开任务管理器'},{k:'F11',a:'全屏'},
+ {k:'Win + E',a:'打开文件管理器'},{k:'Win + Tab',a:'任务视图'},
+ {k:'Win + D',a:'回桌面'},{k:'Win + L',a:'锁屏'},
+ {k:'Win + Shift + S',a:'截图'},{k:'Win + V',a:'剪贴板历史'}
 ];
 function renderShortcuts(){const box=$('#scList');box.innerHTML='';SHORTCUTS.forEach(x=>{
   const d=document.createElement('div');d.className='sc';d.innerHTML=`<kbd>${x.k}</kbd><span>${x.a}</span>`;box.appendChild(d)})}
+
+/* ---------- 设备信息 ---------- */
+function sysRender(){const n=navigator,ua=n.userAgent;
+  const m=ua.match(/Chrome\/([\d.]+)/)||ua.match(/Edg\/([\d.]+)/)||ua.match(/Firefox\/([\d.]+)/);
+  const info=[
+   ['系统',n.platform||'未知'],
+   ['浏览器',m?(m[1]?'Chrome/Edge '+m[1]:n.userAgent.split('/')[0]):'浏览器'],
+   ['在线',n.onLine?'在线':'离线'],
+   ['设备内存',n.deviceMemory?(n.deviceMemory+' GB'):'未知'],
+   ['逻辑核心',n.hardwareConcurrency?n.hardwareConcurrency+' 核':'未知'],
+   ['屏幕',screen.width+'×'+screen.height],
+   ['视窗',innerWidth+'×'+innerHeight],
+   ['渲染',(ua.match(/NVIDIA|AMD|Apple|Intel GPU/)?'硬件加速':'软件渲染')]
+  ];
+  document.getElementById('sysInfo').innerHTML=info.map(([k,v])=>`<div class="kv"><b>${k}</b>${v}</div>`).join('')}
+sysRender();
+
+/* ---------- 今日一学 ---------- */
+const FACTS=[
+  '水是少数几种结冰后反而变轻的物质，所以冰能浮在水上。',
+  '输入中文主要靠输入法查表，和不怎么用到的英文键盘关系不大。',
+  '一次深呼吸放慢一点，能让心跳降下来，紧张的时候试试。',
+  '人体约七成是水，但也没必要硬凑每天八杯。',
+  '给文件多存一份副本，比纠结用哪个备份工具重要得多。',
+  '电脑用久了变卡，多半是后台进程占着内存，不一定是该换新。',
+  '睡前一小时少看亮屏，入睡通常会更快一些。',
+  '把大任务拆成三步，第一小步足够小，就更容易开始。',
+  '浏览器开太多标签会拖慢电脑，关掉不看的省心省电。',
+  '长按电源键通常不是关机，清清后台再用正规方式关更稳。'
+];
+function pickF(){const el=document.getElementById('dShow');
+  el.innerHTML='<p style="font-size:13.5px;line-height:1.7;color:var(--ink)">'+FACTS[Math.floor(Math.random()*FACTS.length)]+'</p>'}
+document.getElementById('dNext').onclick=pickF;pickF();
 
 /* ---------- 每日一言 ---------- */
 const DEFAULT_QUOTES=[
