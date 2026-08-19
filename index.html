@@ -200,29 +200,9 @@ html[data-theme=dark] .toolchip.on{color:#0c1016}
 .collect .clk small{display:block;font-size:11px;color:var(--ink3);margin-top:2px}
 .catdot{width:8px;height:8px;border-radius:50%;flex:none}
 h4.sec{font-size:12px;letter-spacing:1.5px;color:var(--ink3);margin:2px 0}
-.week-axis{display:flex;flex-direction:column;gap:4px;max-height:310px;overflow:auto}
-.wday{font-size:12px;color:var(--ink3);letter-spacing:1px;margin-top:8px}
-.wday:first-child{margin-top:0}
-.wrow{display:flex;gap:9px;align-items:flex-start;padding:6px 2px;border-bottom:1px dashed var(--line);animation:in .25s}
-.wrow .t{flex:1;font-size:13px}
-.wrow time{font-size:10.5px;color:var(--ink3);font-variant-numeric:tabular-nums;flex:none}
-.wrow .del{border:0;background:none;color:var(--ink3);cursor:pointer;opacity:0;font-size:14px}
-.wrow:hover .del{opacity:1}
-.arch-item{border:1px solid var(--line);border-radius:8px;padding:9px 13px;background:var(--bg2);animation:in .3s}
-.arch-item summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px}
-.arch-item summary::-webkit-details-marker{display:none}
-.arch-item .amark{color:var(--brand);font-size:11px}
-.arch-body{margin-top:9px;font-size:12.5px;color:var(--ink2);line-height:1.75;white-space:pre-wrap;border-top:1px dashed var(--line);padding-top:8px}
-.arch-body small{display:block;color:var(--ink3);font-size:11px;margin-bottom:4px}
-
 .qshow{padding:18px 16px;border:1px dashed var(--line2);border-radius:10px;background:var(--bg2);text-align:center;min-height:78px;display:flex;flex-direction:column;justify-content:center;gap:7px}
 .qshow b{font-size:16px;font-weight:500;line-height:1.55}
 .qshow span{font-size:12px;color:var(--ink3)}
-.qlist{display:flex;flex-direction:column;gap:4px;max-height:164px;overflow:auto}
-.qrow{display:flex;gap:8px;align-items:flex-start;padding:7px 2px;border-bottom:1px dashed var(--line);animation:in .25s}
-.qrow .t{flex:1;font-size:12.5px;color:var(--ink2)}
-.qrow .del{border:0;background:none;color:var(--ink3);cursor:pointer;font-size:14px}
-.qrow .del:hover{color:var(--warn)}
 
 footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px;padding-top:30px;letter-spacing:.5px}
 
@@ -275,10 +255,9 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
     <a href="#sched"><span class="n">07</span>课程 <span class="dot">·</span></a>
     <a href="#tools"><span class="n">08</span>工具 <span class="dot">·</span></a>
     <a href="#collect"><span class="n">09</span>收藏 <span class="dot">·</span></a>
-    <a href="#week"><span class="n">10</span>日程 <span class="dot">·</span></a>
-    <a href="#sync"><span class="n">11</span>云同步 <span class="dot">·</span></a>
-    <a href="#decision"><span class="n">12</span>随机 <span class="dot">·</span></a>
-    <a href="#quotes"><span class="n">13</span>名言 <span class="dot">·</span></a>
+    <a href="#sync"><span class="n">10</span>云同步 <span class="dot">·</span></a>
+    <a href="#decision"><span class="n">11</span>随机 <span class="dot">·</span></a>
+    <a href="#quotes"><span class="n">12</span>一言 <span class="dot">·</span></a>
   </nav>
 
   <div>
@@ -441,19 +420,9 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
         <div class="rowfoot"><span id="colCount"></span><span>存下先不看的，回头再看</span></div>
       </section>
 
-      <!-- 日程 · 周复盘 -->
-      <section class="card wide" id="week">
-        <h3><span class="idx">10</span>日程 · 周复盘<span class="ctrl"><button class="chip" id="weekGoToday">跳今天</button></span></h3>
-        <div class="inputrow"><input id="weekInp" placeholder="今天做了啥，随手记一条"><button class="btn" id="weekAdd">记一条</button></div>
-        <div class="week-axis" id="weekAxis"></div>
-        <h4 class="sec">周小结 · 存进复盘</h4>
-        <div class="inputrow"><input id="weekNote" placeholder="这周整体小结（可空）"><button class="btn ghost" id="weekArchive">存为复盘</button></div>
-        <div class="archives" id="archList" style="display:flex;flex-direction:column;gap:8px"></div>
-      </section>
-
       <!-- 云同步 -->
       <section class="card wide" id="sync">
-        <h3><span class="idx">11</span>云同步<span class="ctrl"><button class="chip" id="syncTest">测试连接</button></span></h3>
+        <h3><span class="idx">10</span>云同步<span class="ctrl"><button class="chip" id="syncTest">测试连接</button></span></h3>
         <p style="color:var(--ink3);font-size:12.5px">数据存在私有仓库的 <code>data.json</code>。备份=把本机传上去；拉取=把云端拿下来；改动会在本机缓存，方便离线用。</p>
         <div class="syncbox">
           <div class="sync-meta">
@@ -471,7 +440,7 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
 
       <!-- 随机决策器 -->
       <section class="card" id="decision">
-        <h3><span class="idx">12</span>随机决策器</h3>
+        <h3><span class="idx">11</span>随机决策器</h3>
         <div class="toolrow" style="justify-content:center">
           <span class="toolchip dec-m on" data-m="eat">吃啥</span>
           <span class="toolchip dec-m" data-m="coin">硬币</span>
@@ -479,18 +448,19 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
           <span class="toolchip dec-m" data-m="custom">自定义</span>
         </div>
         <div class="trans-big" id="decRes" style="text-align:center;font-size:26px;min-height:46px;padding:8px 0">掷一下</div>
-        <div class="toolrow" style="justify-content:center"><button class="btn" id="decGo">丢一次</button></div>
-        <div class="dec-edit">
+        <div class="toolrow" style="justify-content:center">
+          <button class="btn" id="decGo">丢一次</button>
+          <button class="btn ghost" id="decEdit" data-open="0">改选项</button>
+        </div>
+        <div class="dec-edit" style="display:none">
           <textarea id="decOpts" class="inp" style="width:100%;min-height:70px" placeholder="每行放一个选项，改完自动存…"></textarea>
         </div>
       </section>
 
-      <!-- 灵感名言 -->
+      <!-- 每日一言 -->
       <section class="card" id="quotes">
-        <h3><span class="idx">13</span>灵感名言<span class="ctrl"><button class="chip" id="qNext">换一句</button></span></h3>
+        <h3><span class="idx">12</span>每日一言<span class="ctrl"><button class="chip" id="qNext">换一句</button></span></h3>
         <div class="qshow" id="qShow"></div>
-        <div class="inputrow"><input id="qText" placeholder="存一句戳中你的话…"><input id="qAuth" placeholder="出处(可空)" style="flex:none;width:110px"><button class="btn" id="qAdd">收下</button></div>
-        <div class="qlist" id="qList"></div>
       </section>
 
     </main>
@@ -831,83 +801,46 @@ document.getElementById('colAdd').onclick=addCol;
 document.getElementById('colTitle').addEventListener('keydown',e=>{if(e.key==='Enter')addCol()});
 document.getElementById('colFilter').addEventListener('change',renderCol);
 
-/* ---------- 日程 · 周复盘 ---------- */
-let wlog=ls.get('week',[]);
-let arch=ls.get('arch',[]);
-function wdCN(ds){const d=new Date(ds+'T00:00:00');return ['周日','周一','周二','周三','周四','周五','周六'][d.getDay()]}
-function weekStart(){const d=new Date(todayKey+'T00:00:00');d.setDate(d.getDate()-((d.getDay()+6)%7));return d}
-function renderWeek(){const box=document.getElementById('weekAxis');
-  const mon=weekStart();let html='';
-  for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);
-    const ds=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
-    const items=wlog.filter(x=>x.d===ds);
-    if(!items.length&&ds!==todayKey)continue;
-    html+=`<div class="wday">${ds.slice(5).replace('-','/')} ${wdCN(ds)}${ds===todayKey?' · 今天':''}</div>`;
-    items.forEach(it=>{html+=`<div class="wrow"><span class="catdot" style="background:var(--brand);width:6px;height:6px"></span><span class="t">${esc(it.tx)}</span><time>${it.t||''}</time><button class="del" data-id="${it.id}">✕</button></div>`})}
-  if(!wlog.some(x=>x.d===todayKey)||html===''){
-    const tds=todayKey.slice(5).replace('-','/');
-    html+=`<div class="wday">${tds} ${wdCN(todayKey)} · 今天</div><div class="wrow"><span class="t" style="color:var(--ink3)">今天还没记，随手写一条。</span></div>`}
-  box.innerHTML=html;
-  box.querySelectorAll('.del').forEach(b=>b.onclick=()=>{const id=+b.dataset.id;wlog=wlog.filter(x=>x.id!==id);ls.set('week',wlog);renderWeek()})}
-document.getElementById('weekAdd').onclick=()=>{const v=document.getElementById('weekInp').value.trim();if(!v)return;
-  const n=new Date();const ds=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());
-  wlog.push({id:Date.now(),d:ds,t:pad(n.getHours())+':'+pad(n.getMinutes()),tx:v});
-  document.getElementById('weekInp').value='';ls.set('week',wlog);renderWeek();toast('记下了')};
-document.getElementById('weekInp').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('weekAdd').click()});
-document.getElementById('weekGoToday').onclick=()=>document.getElementById('weekAxis').scrollIntoView({behavior:'smooth'});
-function renderArch(){const box=document.getElementById('archList');box.innerHTML='';
-  arch.forEach(a=>{const d=document.createElement('details');d.className='arch-item';
-    d.innerHTML=`<summary><span>${a.at} · ${a.count} 条</span><span class="amark">${a.note?'已存小结':'展开 ↑'}</span></summary>`+
-      `<div class="arch-body">${a.note?`<small>小结：${esc(a.note)}</small>`:''}<small>${a.text}</small></div>`;
-    box.appendChild(d)})}
-document.getElementById('weekArchive').onclick=()=>{const note=document.getElementById('weekNote').value.trim();
-  const mon=weekStart();const ms=mon.getFullYear()+'-'+pad(mon.getMonth()+1)+'-'+pad(mon.getDate());
-  const items=wlog.filter(x=>x.d>=ms&&x.d<=todayKey);
-  if(!items.length&&!note){toast('这周还没记内容');return}
-  arch.unshift({at:ms,count:items.length,note,text:items.map(x=>`· ${x.d.slice(5).replace('-','/')} ${x.t} ${x.tx}`).join('\n')});
-  ls.set('arch',arch);renderArch();document.getElementById('weekNote').value='';toast('已存为复盘')};
-
 /* ---------- 随机决策器 ---------- */
 const DECDEF={eat:['米饭配俩菜','面条','火锅','饺子','披萨','螺蛳粉','麻辣烫','自己随便做'],custom:['选项A','选项B','选项C']};
 let decMode='eat';
 function decOpts(){if(decMode==='coin')return['正面','反面'];if(decMode==='dice')return Array.from({length:6},(_,i)=>String(i+1));
   return ls.get('popts_'+decMode,DECDEF[decMode])||DECDEF[decMode]}
-function decRefresh(){const editable=decMode==='eat'||decMode==='custom';
-  document.getElementById('decOpts').parentElement.style.display=editable?'':'none';
-  if(editable)document.getElementById('decOpts').value=(ls.get('popts_'+decMode,DECDEF[decMode])||DECDEF[decMode]).join('\n')}
 function decPick(){const opts=decOpts();const x=opts[Math.floor(Math.random()*opts.length)];
   const el=document.getElementById('decRes');el.textContent=x;
   el.style.animation='none';void el.offsetWidth;el.style.animation='in .25s'}
 document.querySelectorAll('.dec-m').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.dec-m').forEach(x=>x.classList.remove('on'));b.classList.add('on');
-  decMode=b.dataset.m;decRefresh()});
+  decMode=b.dataset.m;const open=document.getElementById('decEdit').dataset.open==='1';
+  if(open&&(decMode==='eat'||decMode==='custom'))document.getElementById('decOpts').value=(ls.get('popts_'+decMode,DECDEF[decMode])||DECDEF[decMode]).join('\n')});
 document.getElementById('decGo').onclick=decPick;
+const decEdit=document.getElementById('decEdit'),decEditBox=document.querySelector('.dec-edit');
+function syncOpts(){document.getElementById('decOpts').value=(ls.get('popts_'+decMode,DECDEF[decMode])||DECDEF[decMode]).join('\n')}
+decEdit.onclick=()=>{const open=decEdit.dataset.open==='1';decEdit.dataset.open=open?'0':'1';
+  decEditBox.style.display=open?'none':'block';decEdit.textContent=open?'改选项':'收起';
+  if(!open)syncOpts()};
 document.getElementById('decOpts').addEventListener('input',e=>{
   if(decMode==='eat'||decMode==='custom')ls.set('popts_'+decMode,e.value.split(/\n/).map(s=>s.trim()).filter(Boolean))});
-decRefresh();
 
-/* ---------- 灵感名言 ---------- */
-const DEFAULT_QUOTES=[{t:'慢慢来，比较快。',a:''},{t:'一次只做一件，做好再下一件。',a:''},{t:'开始就是最好的完成。',a:''},{t:'难的不是远方，是脚下的第一步。',a:''}];
-let quotes=ls.get('quotes',DEFAULT_QUOTES);
-function showQ(){const q=quotes[Math.floor(Math.random()*quotes.length)];if(!q)return;
-  document.getElementById('qShow').innerHTML=`<b>“${esc(q.t)}”</b>${q.a?`<span>— ${esc(q.a)}</span>`:''}`}
-function renderQ(){const l=document.getElementById('qList');l.innerHTML='';
-  quotes.forEach((q,i)=>{const d=document.createElement('div');d.className='qrow';
-    d.innerHTML=`<span class="t">${esc(q.t)}${q.a?` <em style="color:var(--ink3);font-style:normal;font-size:11px">— ${esc(q.a)}</em>`:''}</span><button class="del">✕</button>`;
-    d.querySelector('.del').onclick=()=>{quotes.splice(i,1);ls.set('quotes',quotes);renderQ()};
-    l.appendChild(d)})}
-document.getElementById('qNext').onclick=()=>{if(quotes.length)showQ()};
-document.getElementById('qAdd').onclick=()=>{const t=document.getElementById('qText').value.trim();if(!t){toast('写一句再收');return}
-  quotes.push({t,a:document.getElementById('qAuth').value.trim()});
-  document.getElementById('qText').value='';document.getElementById('qAuth').value='';
-  ls.set('quotes',quotes);renderQ();showQ();toast('收到了')};
+/* ---------- 每日一言 ---------- */
+const DEFAULT_QUOTES=[
+ {t:'慢慢来，比较快。',a:''},{t:'一次只做一件，做好再下一件。',a:''},
+ {t:'开始就是最好的完成。',a:''},{t:'难的不是远方，是脚下的第一步。',a:''},
+ {t:'把事做完，比把事做完美更值钱。',a:''},{t:'今天也没那么糟，至少你又往前挪了一点。',a:''},
+ {t:'别等想清楚再开始，开始了才会清楚。',a:''},{t:'睡饱了，路才好走。',a:''}];
+function paintQ(q){if(!q)return;document.getElementById('qShow').innerHTML=`<b>“${esc(q.t)}”</b>${q.a?`<span>— ${esc(q.a)}</span>`:''}`}
+function pickQ(){const q=DEFAULT_QUOTES[Math.floor(Math.random()*DEFAULT_QUOTES.length)];
+  ls.set('q_daily',q);ls.set('q_refresh',new Date().toDateString());paintQ(q);return q}
+function showQ(){const today=new Date().toDateString();if(ls.get('q_refresh','')!==today)pickQ();else paintQ(ls.get('q_daily',DEFAULT_QUOTES[0]))}
+document.getElementById('qNext').onclick=pickQ;
+showQ();
 
 /* 键盘召唤搜索 */
 document.addEventListener('keydown',e=>{if(e.key==='/'&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();$('#act').scrollIntoView({behavior:'smooth'})}});
 $('#searchBtn').onclick=()=>{$('#act').scrollIntoView({behavior:'smooth'})};
 
 /* 初始化 */
-mood();renderLaunch();renderTodos();renderNotes();renderFeed();renderQuick();renderSched();renderCol();colOk();renderWeek();renderArch();showQ();renderQ();pomUI();tick();
+mood();renderLaunch();renderTodos();renderNotes();renderFeed();renderQuick();renderSched();renderCol();colOk();pomUI();tick();
 </script>
 </body>
 </html>
