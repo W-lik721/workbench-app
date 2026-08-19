@@ -103,7 +103,8 @@ html[data-theme=dark] .btn{color:#0c1016}
 .tabs button:last-child{border-right:0}
 .tabs button.on{background:var(--brand);color:#fff}
 html[data-theme=dark] .tabs button.on{color:#0c1016}
-.vfeed{display:flex;flex-direction:column;gap:9px;height:400px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--ink3) 55%,transparent) transparent;padding-right:2px}
+#feed{display:flex;flex-direction:column;min-height:0}
+.vfeed{display:flex;flex-direction:column;gap:9px;flex:1 1 auto;min-height:140px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--ink3) 55%,transparent) transparent;padding-right:2px}
 .vitem{display:flex;gap:10px;align-items:flex-start}
 .vitem .bd{width:7px;height:7px;border-radius:50%;margin-top:6px;flex:none}
 .vitem .c{border:1px solid var(--line);border-radius:8px;padding:8px 11px;flex:1;background:var(--bg2)}
@@ -450,7 +451,15 @@ function beep(){try{const C=new (window.AudioContext||window.webkitAudioContext)
 /* ---------- 动态 ---------- */
 const FEED={
  '10':[
-  {d:'今天',type:'l',c:'专属能力这边顺了，装上就能用，省心一点。'}],
+  {d:'今天',type:'l',c:'专注段 · 25 分钟专注计时，到点提醒你起来动一动'},
+  {d:'今天',type:'l',c:'动态一览 · 每日中文新闻 + AI 智能资讯实时聚合'},
+  {d:'今天',type:'l',c:'快捷启动 · 常用网站与工具一键直达'},
+  {d:'今天',type:'l',c:'快捷键速查 · 28 组系统与浏览器快捷键'},
+  {d:'今天',type:'r',c:'状态自检 · 网络 / 电源 / 硬件 / 本地服务实时检测'},
+  {d:'今天',type:'r',c:'设备信息 · 本机内存、CPU、屏幕参数一览'},
+  {d:'今天',type:'l',c:'今日一学 · 每天一条实用小知识'},
+  {d:'今天',type:'m',c:'随机决策 · 纠结时让选项自己选一个'},
+  {d:'今天',type:'m',c:'灵感名言 · 每天自动换一句坐镇'}],
  '40':[
   {d:'现在',type:'r',c:'服务都挺正常。本地这块没出岔子。'}]
 };
