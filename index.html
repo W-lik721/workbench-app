@@ -459,37 +459,35 @@ const FKEY={10:'能力',20:'AI',30:'新闻',40:'状态'};
 const FTYPE={l:'学习',g:'资讯',r:'运行',m:'改善'};
 let feedTab='20';
 
-const HN_API='https://hacker-news.firebaseio.com/v0';
-const HN_URL='https://news.ycombinator.com/item?id=';
-const AI_KEYWORDS=['ai','gpt','llm','openai','anthropic','claude','gemini','deepseek','machine learning','neural','agent','model','bard','copilot','chatgpt','diffusion'];
-let hnAI=[],hnAll=[];
-function ago(ts){const s=(Date.now()/1000-ts)|0;if(s<60)return '刚刚';if(s<3600)return (s/60|0)+' 分钟前';if(s<86400)return (s/3600|0)+' 小时前';return (s/86400|0)+' 天前'}
-function domOf(url){try{return new URL(url).hostname.replace(/^www\./,'')}catch(e){return 'Hacker News'}}
-async function translateTitle(en){en=(en||'').slice(0,300);if(!en)return en;
-  const c=ls.get('hn_t',{});if(c[en])return c[en];
-  try{const r=await fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(en)+'&langpair='+encodeURIComponent('en|zh-CN'));
-    const j=await r.json();const t=((j&&j.responseData&&j.responseData.translatedText)||'').replace(/&#\d+;/g,'').trim();
-    if(t&&t.toLowerCase()!==en.toLowerCase()){if(Object.keys(c).length>500)c={};c[en]=t;ls.set('hn_t',c);return t}}catch(e){}
-  return en}
-async function loadHN(){try{
-  const ids=await fetch(HN_API+'/topstories.json').then(r=>r.json());
-  const items=(await Promise.all(ids.slice(0,32).map(id=>fetch(HN_API+'/item/'+id+'.json').then(r=>r.json())))).filter(i=>i&&i.type==='story'&&i.title);
-  hnAll=items.slice().sort((a,b)=>b.score-a.score);
-  hnAI=items.filter(i=>AI_KEYWORDS.some(k=>i.title.toLowerCase().includes(k)));
-  if(feedTab==='20'||feedTab==='30')renderNews();
-  }catch(e){$('#feedList').innerHTML='<div class="empty">新闻暂时没拉到，稍后再看。</div>'}}
-function newsRow(it){return '<div class="vitem"><span class="bd" style="background:var(--brand)"></span><div class="c"><p><a href="'+esc(it.url||(HN_URL+it.id))+'" target="_blank" rel="noopener" data-hn="'+esc(it.title)+'">'+esc(it.title)+'</a></p><span>'+domOf(it.url)+' · '+ago(it.time)+'</span></div></div>'}
-async function renderNews(){const list=$('#feedList');const arr=feedTab==='20'?hnAI:hnAll;
-  list.innerHTML=arr.slice(0,feedTab==='20'?10:12).map(newsRow).join('')||'<div class="empty">加载中…</div>';
-  try{
-    const links=list.querySelectorAll('a[data-hn]');
-    await Promise.all(Array.from(links).slice(0,8).map(async a=>{const zh=await translateTitle(a.dataset.hn);if(zh&&zh!==a.dataset.hn)a.textContent=zh}));
-  }catch(e){}
+/* 每日中文新闻（源：60秒读懂世界） */
+const NEWS_API='https://60s.viki.moe/v2/60s';
+const AI_KEYS=['ai','人工智能','大模型','机器人','模型','openai','gpt','算法','算力','芯片','科技','软件','数字','生成式','版权','航天','电商','智能','智驾'];
+let dailyNews=[],dailyLink='',dailyDate='';
+function agoDay(d){if(!d)return '今天';const p=d.split('-');return (p[0]||'')+'年'+(p[1]||'')+'月'+(p[2]||'')+'日'}
+async function load60s(){try{
+  const r=await fetch(NEWS_API).then(x=>x.json());
+  const dd=(r&&r.data)||{};
+  dailyNews=dd.news||[];dailyLink=dd.link||'';dailyDate=dd.date||'';
+  if(feedTab==='20'||feedTab==='30')renderNewsCN();
+  }catch(e){$('#feedList').innerHTML='<div class="empty">今天的新闻还没拉到，稍后再看。</div>'}}
+function renderNewsCN(){
+  const list=$('#feedList');
+  if(!dailyNews.length){list.innerHTML='<div class="empty">加载中…</div>';return}
+  const isAI=feedTab==='20';
+  const arr=isAI?dailyNews.filter(t=>AI_KEYS.some(k=>t.toLowerCase().includes(k))):dailyNews;
+  let out;
+  if(isAI&&!arr.length){out='<div class="empty">今天这块暂无智能专题，切到「新闻」看完整中文简报吧。</div>'}
+  else{
+    out=arr.slice(0,isAI?6:9).map(t=>'<div class="vitem"><span class="bd" style="background:var(--brand)"></span>'+
+      '<div class="c"><p>'+esc(t)+'</p><span>'+agoDay(dailyDate)+' · '+(isAI?'智能资讯':'中文新闻')+'</span></div></div>').join('');
+  }
+  if(dailyLink&&!isAI)out+='<div class="empty" style="margin-top:-2px"><a href="'+esc(dailyLink)+'" target="_blank" rel="noopener">查看今日完整简报 →</a></div>';
+  list.innerHTML=out;
 }
 function renderFeed(){
   const tabs=$('#feedTabs');tabs.innerHTML='';Object.keys(FKEY).forEach(k=>{
     const b=document.createElement('button');b.textContent=FKEY[k];b.className=k===feedTab?'on':'';b.onclick=()=>{feedTab=k;renderFeed()};tabs.appendChild(b)});
-  if(feedTab==='20'||feedTab==='30'){renderNews();if(!hnAll.length)loadHN();return}
+  if(feedTab==='20'||feedTab==='30'){if(!dailyNews.length)load60s();else renderNewsCN();return}
   const list=$('#feedList');list.innerHTML='';
   (FEED[feedTab]||[]).forEach(it=>{
     const d=document.createElement('div');d.className='vitem';
