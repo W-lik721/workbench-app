@@ -76,19 +76,6 @@ main.cols{display:grid;grid-template-columns:1fr 1fr;gap:22px;min-width:0}
 .chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
 html[data-theme=dark] .chip.on{color:#0c1016}
 
-/* 快捷启动 */
-.launch{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.launch a{display:flex;align-items:center;gap:9px;padding:10px;border:1px solid var(--line);border-radius:9px;
-  color:var(--ink);transition:.16s;background:var(--bg2)}
-.launch a:hover{border-color:var(--brand);transform:translateY(-1px);box-shadow:var(--shadow);text-decoration:none}
-.launch svg{width:18px;height:18px;color:var(--brand);flex:none}
-.launch em{font-style:normal;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-/* 输入行 */
-.inputrow{display:flex;gap:8px}
-.inputrow input{flex:1;min-width:0;padding:9px 11px;border:1px solid var(--line2);border-radius:8px;
-  background:var(--bg);color:var(--ink);font:inherit;font-size:13px}
-.inputrow input:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 18%,transparent)}
 .btn{padding:9px 13px;border:1px solid var(--brand);background:var(--brand);color:#fff;border-radius:8px;
   font:inherit;font-size:13px;cursor:pointer;transition:.15s;white-space:nowrap}
 .btn:hover{filter:brightness(1.06)}
@@ -96,20 +83,7 @@ html[data-theme=dark] .chip.on{color:#0c1016}
 .btn.ghost:hover{border-color:var(--ink2)}
 html[data-theme=dark] .btn{color:#0c1016}
 
-/* 列表 */
-.list{list-style:none;display:flex;flex-direction:column;gap:2px;max-height:280px;overflow:auto}
-.list li{display:flex;align-items:center;gap:9px;padding:7px 4px;border-bottom:1px dashed var(--line);animation:in .25s ease}
 @keyframes in{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
-.list li.done .t{text-decoration:line-through;color:var(--ink3)}
-.list .cb{width:16px;height:16px;flex:none;border:1.5px solid var(--line2);border-radius:5px;cursor:pointer;
-  display:inline-flex;align-items:center;justify-content:center;color:transparent;transition:.15s}
-.list .cb svg{width:11px;height:11px}
-.list li.done .cb{background:var(--brand);border-color:var(--brand);color:#fff}
-.list .t{flex:1;font-size:13.5px}
-.list .del{flex:none;border:0;background:none;color:var(--ink3);cursor:pointer;opacity:0;transition:.15s;font-size:14px}
-.list li:hover .del{opacity:1}
-.list .del:hover{color:var(--warn)}
-.rowfoot{display:flex;justify-content:space-between;align-items:center;color:var(--ink3);font-size:12px}
 
 /* 番茄钟 */
 .tomato{display:flex;flex-direction:column;align-items:center;gap:14px}
@@ -123,17 +97,6 @@ html[data-theme=dark] .btn{color:#0c1016}
 .modes{display:flex;gap:6px}
 .tomato .cntls{display:flex;gap:8px;align-items:center}
 
-/* 速记 */
-.notes textarea{width:100%;min-height:96px;resize:vertical;padding:10px 11px;border:1px solid var(--line2);
-  border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:13px}
-.notes textarea:focus{outline:none;border-color:var(--brand)}
-.note-list{max-height:150px;overflow:auto;display:flex;flex-direction:column;gap:6px}
-.note-item{display:flex;gap:9px;align-items:flex-start;padding:8px 10px;background:var(--bg2);border-radius:8px;animation:in .25s}
-.note-item .txt{flex:1;font-size:13px;white-space:pre-wrap;word-break:break-word}
-.note-item time{font-size:10.5px;color:var(--ink3);flex:none}
-.note-item .del{flex:none;border:0;background:none;color:var(--ink3);cursor:pointer;font-size:14px}
-.note-item .del:hover{color:var(--warn)}
-
 /* 动态分页 */
 .tabs{display:flex;gap:0;border:1px solid var(--line2);border-radius:8px;overflow:hidden;width:max-content}
 .tabs button{border:0;background:none;padding:7px 13px;font:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;border-right:1px solid var(--line2)}
@@ -146,26 +109,9 @@ html[data-theme=dark] .tabs button.on{color:#0c1016}
 .vitem .c{border:1px solid var(--line);border-radius:8px;padding:8px 11px;flex:1;background:var(--bg2)}
 .vitem .c p{font-size:13px}
 .vitem .c span{font-size:11px;color:var(--ink3)}
+.empty{color:var(--ink3);font-size:12.5px;padding:10px 0}
 
-/* 常用入口 */
-.links{display:flex;flex-wrap:wrap;gap:8px}
-.links a{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid var(--line);border-radius:20px;
-  font-size:12.5px;color:var(--ink);transition:.15s;background:var(--bg2)}
-.links a:hover{border-color:var(--brand);color:var(--brand);text-decoration:none;transform:translateY(-1px)}
-.links svg{width:13px;height:13px;color:var(--brand)}
-
-/* 课程表 */
-.sched-tool{display:flex;gap:8px;flex-wrap:wrap}
-.sched-tool input{flex:1;min-width:180px;padding:9px 11px;border:1px solid var(--line2);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:12.5px}
-table.sched{width:100%;border-collapse:collapse;font-size:12.5px}
-table.sched th,table.sched td{border:1px solid var(--line);padding:7px 6px;text-align:left;vertical-align:top}
-table.sched th{background:var(--bg2);font-weight:600;color:var(--ink2)}
-table.sched td.cell-light{background:color-mix(in srgb,#fff 60%,transparent)}
-html[data-theme=dark] table.sched td.cell-light{background:color-mix(in srgb,#fff 4%,transparent)}
-table.sched .w{display:block;font-size:11px;color:var(--ink3);margin-top:2px}
-.sched-empty{color:var(--ink3);font-size:12.5px;padding:10px 0}
-
-/* 同步面板 */
+/* 云同步 */
 .syncbox{margin-top:8px}
 .sync-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
 .sync-meta input{padding:7px 10px;border:1px solid var(--line2);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:12.5px}
@@ -194,12 +140,26 @@ html[data-theme=dark] #toast{background:var(--card);color:var(--ink);border:1px 
 .toolchip{font-size:12px;padding:6px 13px;border:1px solid var(--line2);border-radius:8px;background:transparent;color:var(--ink2);cursor:pointer}
 .toolchip.on{background:var(--brand);border-color:var(--brand);color:#fff}
 html[data-theme=dark] .toolchip.on{color:#0c1016}
-.collect .clk{flex:1;min-width:0}
-.collect .clk a{color:var(--ink);font-weight:600}
-.collect .clk a:hover{color:var(--brand)}
-.collect .clk small{display:block;font-size:11px;color:var(--ink3);margin-top:2px}
-.catdot{width:8px;height:8px;border-radius:50%;flex:none}
-h4.sec{font-size:12px;letter-spacing:1.5px;color:var(--ink3);margin:2px 0}
+
+/* 本地服务状态 */
+.svc{display:flex;flex-wrap:wrap;gap:10px}
+.svc-item{flex:1;min-width:170px;border:1px solid var(--line);border-radius:9px;padding:11px 13px;background:var(--bg2);
+  display:flex;align-items:center;gap:10px}
+.svc-item .s{width:9px;height:9px;border-radius:50%;flex:none;background:var(--ink3)}
+.svc-item .s.ok{background:var(--ok)}
+.svc-item .s.bad{background:var(--warn)}
+.svc-item .n{font-size:13px;font-weight:600}
+.svc-item .u{font-size:10.5px;color:var(--ink3);margin-top:1px}
+.svc-item .d{margin-left:auto;font-size:11.5px;color:var(--ink2);flex:none}
+.svc-item .d.ok{color:var(--ok)}
+.svc-item .d.bad{color:var(--warn)}
+
+/* 快捷键速查 */
+.sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px}
+.sc{display:flex;align-items:center;gap:9px;font-size:12.5px;padding:5px 2px;color:var(--ink2);border-bottom:1px dashed var(--line)}
+.sc kbd{font:inherit;font-size:11.5px;background:var(--bg);border:1px solid var(--line2);border-bottom-width:2px;
+  border-radius:5px;padding:1px 6px;color:var(--ink);white-space:nowrap}
+
 .qshow{padding:18px 16px;border:1px dashed var(--line2);border-radius:10px;background:var(--bg2);text-align:center;min-height:78px;display:flex;flex-direction:column;justify-content:center;gap:7px}
 .qshow b{font-size:16px;font-weight:500;line-height:1.55}
 .qshow span{font-size:12px;color:var(--ink3)}
@@ -214,8 +174,8 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
 }
 @media(max-width:560px){
   .hero h1{font-size:24px}
-  .launch{grid-template-columns:repeat(2,1fr)}
   .top .date{display:none}
+  .sc-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -235,7 +195,7 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
   <div class="spacer"></div>
   <div class="date" id="dateLine"></div>
   <div class="clock" id="clock">00:00:00</div>
-  <button class="icon-btn" id="searchBtn" title="快捷搜索（斜杠 / 唤起）">
+  <button class="icon-btn" id="searchBtn" title="快捷回到顶部模块（斜杠 / 唤起）">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg>
   </button>
   <button class="icon-btn" id="themeBtn" title="切换深浅色">
@@ -246,18 +206,14 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
 <div class="wrap">
   <nav class="rail">
     <div class="rail-title">导览</div>
-    <a href="#act"><span class="n">01</span>概览与启动 <span class="dot">·</span></a>
-    <a href="#todo"><span class="n">02</span>行动清单 <span class="dot">·</span></a>
-    <a href="#focus"><span class="n">03</span>专注段 <span class="dot">·</span></a>
-    <a href="#note"><span class="n">04</span>随手记 <span class="dot">·</span></a>
-    <a href="#feed"><span class="n">05</span>动态 <span class="dot">·</span></a>
-    <a href="#links"><span class="n">06</span>常去 <span class="dot">·</span></a>
-    <a href="#sched"><span class="n">07</span>课程 <span class="dot">·</span></a>
-    <a href="#tools"><span class="n">08</span>工具 <span class="dot">·</span></a>
-    <a href="#collect"><span class="n">09</span>收藏 <span class="dot">·</span></a>
-    <a href="#sync"><span class="n">10</span>云同步 <span class="dot">·</span></a>
-    <a href="#decision"><span class="n">11</span>随机 <span class="dot">·</span></a>
-    <a href="#quotes"><span class="n">12</span>一言 <span class="dot">·</span></a>
+    <a href="#focus"><span class="n">01</span>专注段 <span class="dot">·</span></a>
+    <a href="#feed"><span class="n">02</span>动态 <span class="dot">·</span></a>
+    <a href="#tools"><span class="n">03</span>工具 <span class="dot">·</span></a>
+    <a href="#decision"><span class="n">04</span>随机 <span class="dot">·</span></a>
+    <a href="#services"><span class="n">05</span>服务 <span class="dot">·</span></a>
+    <a href="#shortcuts"><span class="n">06</span>快捷键 <span class="dot">·</span></a>
+    <a href="#quotes"><span class="n">07</span>一言 <span class="dot">·</span></a>
+    <a href="#sync"><span class="n">08</span>云同步 <span class="dot">·</span></a>
   </nav>
 
   <div>
@@ -265,32 +221,15 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
     <section class="hero">
       <div class="kicker">Personal Console</div>
       <h1>把自己的事收拢到一个地方。</h1>
-      <p class="sub">待办、专注、速记、课程——常用的都放这了，不常用的不摆。</p>
+      <p class="sub">专注、工具箱、随机、一言——都免维护，打开就能用。</p>
       <p class="mood" id="moodLine"></p>
     </section>
 
     <main class="cols">
 
-      <!-- 概览 / 启动 -->
-      <section class="card wide" id="act">
-        <h3><span class="idx">01</span>一屏直达<span class="ctrl"><button class="chip" id="clockMode" title="切换时钟显示">整点主导</button></span></h3>
-        <div class="launch" id="launch"></div>
-      </section>
-
-      <!-- 待办 -->
-      <section class="card" id="todo">
-        <h3><span class="idx">02</span>行动清单<span class="ctrl"><button class="chip" id="clearDoneChip">清已完成</button></span></h3>
-        <div class="inputrow">
-          <input id="todoInp" placeholder="要办的下一件事…">
-          <button class="btn" id="todoAdd">记下</button>
-        </div>
-        <div class="list" id="todoList"></div>
-        <div class="rowfoot"><span id="todoState">0 件事待办</span><span>敲回车 / 点加号加入</span></div>
-      </section>
-
-      <!-- 专注 -->
+      <!-- 专注段 -->
       <section class="card" id="focus">
-        <h3><span class="idx">03</span>专注段<span class="ctrl"><button class="chip" id="soundToggle">🔔 提示音</button></span></h3>
+        <h3><span class="idx">01</span>专注段<span class="ctrl"><button class="chip" id="soundToggle">🔔 提示音</button></span></h3>
         <div class="tomato">
           <div class="timerimg">
             <svg viewBox="0 0 150 150">
@@ -312,49 +251,16 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
         </div>
       </section>
 
-      <!-- 速记 -->
-      <section class="card notes" id="note">
-        <h3><span class="idx">04</span>随手记<span class="ctrl"><button class="chip" id="inspire">给个灵感</button></span></h3>
-        <textarea id="noteInp" placeholder="想到啥先丢这儿…"></textarea>
-        <button class="btn ghost" id="noteSave">存一条</button>
-        <div class="note-list" id="noteList"></div>
-      </section>
-
       <!-- 动态 -->
       <section class="card" id="feed">
-        <h3><span class="idx">05</span>动态一览</h3>
+        <h3><span class="idx">02</span>动态一览</h3>
         <div class="tabs" id="feedTabs"></div>
         <div class="vfeed" id="feedList"></div>
       </section>
 
-      <!-- 常去 -->
-      <section class="card" id="links">
-        <h3><span class="idx">06</span>常去的地方<span class="ctrl"><button class="chip" id="addLinkChip">＋ 添加</button></span></h3>
-        <div class="inputrow" id="linkAddRow" style="display:none">
-          <input id="linkName" placeholder="名字（如 笔记）">
-          <input id="linkUrl" placeholder="https://…">
-          <button class="btn" id="linkSave">加</button>
-        </div>
-        <div class="links" id="linkList"></div>
-      </section>
-
-      <!-- 课程 -->
-      <section class="card wide" id="sched">
-        <h3><span class="idx">07</span>课程表<span class="ctrl">
-          <button class="chip" id="exportCsv">导出 CSV</button>
-          <button class="chip" id="exportJson">导出 JSON</button>
-        </span></h3>
-        <div class="sched-tool">
-          <input id="schedInp" placeholder="可粘贴课程表多行文本（每行：星期 时间 内容），自动解析">
-          <button class="btn" id="schedApply">解析导入</button>
-          <button class="btn ghost" id="schedClear">清空</button>
-        </div>
-        <div id="schedArea"></div>
-      </section>
-
       <!-- 实用工具箱 -->
       <section class="card" id="tools">
-        <h3><span class="idx">08</span>实用工具箱<span class="ctrl"><button class="chip" id="toolCopy">复制结果</button></span></h3>
+        <h3><span class="idx">03</span>实用工具箱<span class="ctrl"><button class="chip" id="toolCopy">复制结果</button></span></h3>
         <div class="tabs" id="toolTabs">
           <button class="on" data-t="color">取色</button>
           <button data-t="conv">换算</button>
@@ -406,41 +312,9 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
         </div>
       </section>
 
-      <!-- 稍后读 收藏 -->
-      <section class="card" id="collect">
-        <h3><span class="idx">09</span>稍后读 · 收藏<span class="ctrl"><select id="colFilter" class="inp" style="font-size:12px;padding:3px 8px"><option value="all">全部分类</option></select></span></h3>
-        <div class="inputrow"><input id="colTitle" placeholder="标题"></div>
-        <div class="inputrow" style="margin-top:8px">
-          <input id="colUrl" placeholder="链接（可空）">
-          <select id="colCat" class="inp"><option value="灵感">灵感</option><option value="阅读">阅读</option><option value="工具">工具</option><option value="资源">资源</option></select>
-          <button class="btn" id="colAdd">收下</button>
-        </div>
-        <div class="inputrow" style="margin-top:8px"><input id="colNote" placeholder="为什么值得存（可空）"></div>
-        <div class="list collect" id="colList" style="max-height:270px"></div>
-        <div class="rowfoot"><span id="colCount"></span><span>存下先不看的，回头再看</span></div>
-      </section>
-
-      <!-- 云同步 -->
-      <section class="card wide" id="sync">
-        <h3><span class="idx">10</span>云同步<span class="ctrl"><button class="chip" id="syncTest">测试连接</button></span></h3>
-        <p style="color:var(--ink3);font-size:12.5px">数据存在私有仓库的 <code>data.json</code>。备份=把本机传上去；拉取=把云端拿下来；改动会在本机缓存，方便离线用。</p>
-        <div class="syncbox">
-          <div class="sync-meta">
-            <input id="cfg_owner" placeholder="仓库所有者（如 W-lik721）">
-            <input id="cfg_repo" placeholder="数据仓库名（如 workbench-sync-data）">
-            <input id="cfg_token" placeholder="最小权限 Token（只授权该仓库）" style="grid-column:1/-1" type="password">
-          </div>
-          <div class="sync-btns">
-            <button class="btn" id="syncUp">备份到云端</button>
-            <button class="btn ghost" id="syncDown">从云端拉取</button>
-          </div>
-          <div class="sync-status" id="syncStatus"></div>
-        </div>
-      </section>
-
       <!-- 随机决策器 -->
       <section class="card" id="decision">
-        <h3><span class="idx">11</span>随机决策器</h3>
+        <h3><span class="idx">04</span>随机决策器</h3>
         <div class="toolrow" style="justify-content:center">
           <span class="toolchip dec-m on" data-m="eat">吃啥</span>
           <span class="toolchip dec-m" data-m="coin">硬币</span>
@@ -457,15 +331,46 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
         </div>
       </section>
 
+      <!-- 本地服务状态 -->
+      <section class="card wide" id="services">
+        <h3><span class="idx">05</span>本地服务状态<span class="ctrl"><button class="chip" id="svcRun">检一遍</button></span></h3>
+        <div class="svc" id="svcList"></div>
+        <p style="color:var(--ink3);font-size:12px">只探测在不在线，不碰你数据。Ollama 得开着才亮；在别的设备上打开时，本机的服务是另一个机器的。</p>
+      </section>
+
+      <!-- 快捷键速查 -->
+      <section class="card" id="shortcuts">
+        <h3><span class="idx">06</span>快捷键速查</h3>
+        <div class="sc-grid" id="scList"></div>
+      </section>
+
       <!-- 每日一言 -->
       <section class="card" id="quotes">
-        <h3><span class="idx">12</span>每日一言<span class="ctrl"><button class="chip" id="qNext">换一句</button></span></h3>
+        <h3><span class="idx">07</span>每日一言<span class="ctrl"><button class="chip" id="qNext">换一句</button></span></h3>
         <div class="qshow" id="qShow"></div>
+      </section>
+
+      <!-- 云同步 -->
+      <section class="card wide" id="sync">
+        <h3><span class="idx">08</span>云同步<span class="ctrl"><button class="chip" id="syncTest">测试连接</button></span></h3>
+        <p style="color:var(--ink3);font-size:12.5px">数据存在私有仓库的 <code>data.json</code>。备份=把本机传上去；拉取=把云端拿下来；改动会在本机缓存，方便离线用。</p>
+        <div class="syncbox">
+          <div class="sync-meta">
+            <input id="cfg_owner" placeholder="仓库所有者（如 W-lik721）">
+            <input id="cfg_repo" placeholder="数据仓库名（如 workbench-sync-data）">
+            <input id="cfg_token" placeholder="最小权限 Token（只授权该仓库）" style="grid-column:1/-1" type="password">
+          </div>
+          <div class="sync-btns">
+            <button class="btn" id="syncUp">备份到云端</button>
+            <button class="btn ghost" id="syncDown">从云端拉取</button>
+          </div>
+          <div class="sync-status" id="syncStatus"></div>
+        </div>
       </section>
 
     </main>
 
-    <footer class="legal">青灯台 · 数据只存你自己看上线的那个浏览器 · 用 token 自己作主</footer>
+    <footer class="legal">青灯台 · 数据只存你看的这个浏览器 · 用 token 自己作主</footer>
   </div>
 </div>
 
@@ -477,6 +382,7 @@ const $=s=>document.querySelector(s);
 const ls={get:(k,d)=>{try{const v=localStorage.getItem(K(k));return v?JSON.parse(v):d}catch(e){return d}},set:(k,v)=>localStorage.setItem(K(k),JSON.stringify(v)),del:k=>localStorage.removeItem(K(k))};
 const K=k=>'wbm-'+k;
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>e.classList.remove('show'),1800)}
+function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 /* 日/时 */
 function pad(n){return n<10?'0'+n:''+n}
 function tick(){
@@ -484,9 +390,7 @@ function tick(){
   $('#clock').textContent=[pad(d.getHours()),pad(d.getMinutes()),pad(d.getSeconds())].join(':');
   const wd=['周日','周一','周二','周三','周四','周五','周六'][d.getDay()];
   $('#dateLine').textContent=`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 · ${wd}`;
-  todayKey=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 }
-let todayKey='';
 setInterval(tick,1000);tick();
 
 /* 主题 */
@@ -509,39 +413,6 @@ const moods=[
 ];
 function mood(){const d=new Date();const m=moods[d.getDay()];$('#moodLine').innerHTML=`${m.g} · <b>${m.t}</b>`}
 
-/* ---------- 快捷启动 ---------- */
-const LAUNCH_MAP=[
- {n:'抖音',u:'https://www.douyin.com',d:'M4 5h10l2 2h4v10H6l-2-2z'},
- {n:'文档',u:'https://docs.example.com',d:'M6 2h8l6 6v14H6z'},
- {n:'AI 日报',u:'https://news.ycombinator.com',d:'M4 19V5M4 19h16M8 9h8M8 13h6'},
- {n:'新闻',u:'https://news.google.com',d:'M4 6h16M4 12h16M4 18h10'},
- {n:'Ollama',u:'http://localhost:11434',d:'M5 3h14v6l2 2-2 2v8H5v-8l-2-2 2-2z'},
- {n:'源码',u:'https://github.com/W-lik721/workbench-app',d:'M9 19c-4 1.5-4-2-6-2m12 5v-3a3 3 0 0 0-.8-2.3c.6.3 2.5 1.3 2-1.7a4 4 0 0 0-1-3 4.2 4.2 0 0 0 .1-2.3C15 8 14.4 7 12.5 7a8 8 0 0 0-3 0C6.4 7.5 6 9 6 11c0 .8.3 1.7.5 2.6'}
-];
-function renderLaunch(){const box=$('#launch');box.innerHTML='';LAUNCH_MAP.forEach(x=>{
-  const a=document.createElement('a');a.href=x.u;a.target='_blank';
-  a.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${x.d}"/></svg><em>${x.n}</em>`;
-  box.appendChild(a)})}
-
-/* ---------- 待办 ---------- */
-let todos=ls.get('todos',[]);
-function saveTodos(){ls.set('todos',todos)}
-function renderTodos(){
-  const l=$('#todoList');l.innerHTML='';
-  todos.forEach((t,i)=>{
-    const li=document.createElement('li');if(t.done)li.classList.add('done');
-    li.innerHTML=`<span class="cb" >${'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>'}</span><span class="t"></span><button class="del" title="删除">✕</button>`;
-    li.querySelector('.t').textContent=t.text;
-    li.querySelector('.cb').onclick=()=>{t.done=!t.done;saveTodos();renderTodos();toast(t.done?'勾上了':'又想起它了')};
-    li.querySelector('.del').onclick=()=>{todos.splice(i,1);saveTodos();renderTodos();toast('删了')};
-    l.appendChild(li)});
-  const left=todos.filter(t=>!t.done).length;
-  $('#todoState').textContent=`${left} 件事待办`;
-}
-$('#todoAdd').onclick=addTodo; $('#todoInp').addEventListener('keydown',e=>{if(e.key==='Enter')addTodo()});
-function addTodo(){const v=$('#todoInp').value.trim();if(!v)return;todos.unshift({text:v,done:false});$('#todoInp').value='';saveTodos();renderTodos();toast('记下了')}
-$('#clearDoneChip').onclick=()=>{if(!todos.some(t=>t.done))return;todos=todos.filter(t=>!t.done);saveTodos();renderTodos();toast('清掉已完成')};
-
 /* ---------- 番茄钟 ---------- */
 let pom={running:false,mode:25,left:25*60,total:25*60,timer:null};
 const R=Math.PI*2*66;
@@ -552,40 +423,28 @@ function pomTick(){if(!pom.running)return;pom.left--;
 function pomUI(){$('#pomTime').textContent=`${pad(Math.floor(pom.left/60))}:${pad(pom.left%60)}`;
   $('#pomLabel').textContent=pom.running?(pom.left>0&&pom.left<pom.total?'专注中':'未开始'):'未开始';
   pomBar()}
+function pomStart(){if(pom.running){pom.running=false;clearInterval(pom.timer);$('#pomStart').textContent='继续'}else{clearInterval(pom.timer);pom.running=true;$('#pomStart').textContent='暂停';pom.timer=setInterval(pomTick,1000)};pomUI()}
+$('#pomStart').onclick=pomStart;
+$('#pomReset').onclick=()=>{pom.running=false;clearInterval(pom.timer);pom.left=pom.total;$('#pomStart').textContent='开始';pomUI()}
 $('#pomModes').querySelectorAll('button').forEach(b=>b.onclick=()=>{
   $('#pomModes').querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
-  pom.mode=+b.dataset.m;pom.total=pom.mode*60;pom.left=pom.total;pom.running=false;clearInterval(pom.timer);pomUI()});
-$('#pomStart').onclick=()=>{if(pom.running){pom.running=false;clearInterval(pom.timer);$('#pomStart').textContent='继续'}else{pom.running=true;$('#pomStart').textContent='暂停';tick()};pomUI()}
-$('#pomReset').onclick=()=>{pom.running=false;clearInterval(pom.timer);pom.left=pom.total;$('#pomStart').textContent='开始';pomUI()}
+  pom.mode=+b.dataset.m;pom.total=pom.mode*60;pom.left=pom.total;pom.running=false;clearInterval(pom.timer);$('#pomStart').textContent='开始';pomUI()});
 let beh;
 $('#soundToggle').onclick=function(){if(this.dataset.on){delete this.dataset.on;this.textContent='🔔 提示音'}else{this.dataset.on='1';this.textContent='搭建中 · 稍后';beh=beep()}};
 function beep(){try{const C=new (window.AudioContext||window.webkitAudioContext)();const o=C.createOscillator();o.type='sine';o.frequency.value=880;const g=C.createGain();g.gain.value=.15;o.connect(g);g.connect(C.destination);o.start();o.stop(C.currentTime+.5)}catch(e){toast('提示音需要页面先点一下才发声')}}
 
-/* ---------- 速记 ---------- */
-let notes=ls.get('notes',[]);
-function renderNotes(){const l=$('#noteList');l.innerHTML='';notes.forEach((n,i)=>{
-  const d=document.createElement('div');d.className='note-item';
-  d.innerHTML=`<div class="txt"></div><time>${n.t}</time><button class="del">✕</button>`;
-  d.querySelector('.txt').textContent=n.text;
-  d.querySelector('.del').onclick=()=>{notes.splice(i,1);ls.set('notes',notes);renderNotes()};
-  l.appendChild(d)})}
-$('#noteSave').onclick=()=>{const v=$('#noteInp').value.trim();if(!v)return;notes.unshift({text:v,t:new Date().toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})});$('#noteInp').value='';ls.set('notes',notes);renderNotes();toast('存好了')};
-$('#inspire').onclick=()=>{const s=['明天要见的人，先想好说点啥','今晚睡前把手机放远一点','最近哪件麻烦事其实可以拆成三步','给一周后的自己留一句提醒'];toast('随心：'+s[Math.floor(Math.random()*s.length)])};
-
 /* ---------- 动态 ---------- */
 const FEED={
  '10':[
-  {d:'今天',type:'l',c:'skill-ops 我顺手调顺了，装载方式又省心一点。'},
-  {d:'今天',type:'l',c:'本地 Ollama 正常监听，直接就能调，不用绕。'}],
+  {d:'今天',type:'l',c:'本地 Ollama 正常监听，直接就能调，不用绕。'},
+  {d:'今天',type:'l',c:'工作台又顺了一点，装上就能用。'}],
  '20':[
-  {d:'今天',type:'g',c:'微信笔记那边顺了，摘抄能直接进库。'}],
+  {d:'今天',type:'g',c:'有可以试的新东西，回头看看值不值得装。'}],
  '30':[
-  {d:'今天',type:'g',c:'灌了个新语料进来，问答顺了一些。'}],
- '40':[
   {d:'现在',type:'r',c:'服务都挺正常。本地这块没出岔子。'}]
 };
 const FCOLS={l:['#4e7c4a',0],g:['#33658a',1],r:['#4e7c4a',0],m:['#b8860b',1]};
-const FKEY={10:'能力',20:'AI',30:'资讯',40:'状态'};
+const FKEY={10:'能力',20:'AI',30:'状态'};
 const FTYPE={l:'学习',g:'资讯',r:'运行',m:'改善'};
 let feedTab='10';
 function renderFeed(){
@@ -596,95 +455,8 @@ function renderFeed(){
     const d=document.createElement('div');d.className='vitem';
     d.innerHTML=`<span class="bd" style="background:${FCOLS[it.type][0]}"></span><div class="c"><p>${it.c}</p><span>${it.d} · ${FTYPE[it.type]||'动态'}</span></div>`;
     list.appendChild(d)});
-  if(!(FEED[feedTab]||[]).length)list.innerHTML='<div class="sched-empty">这块还没记啥</div>';
+  if(!(FEED[feedTab]||[]).length)list.innerHTML='<div class="empty">这块还没记啥</div>';
 }
-
-/* ---------- 常去 ---------- */
-let quick=ls.get('quick',[
- {n:'GitHub',u:'https://github.com'},{n:'工作台源码',u:'https://github.com/W-lik721/workbench-app'},
- {n:'知识库',u:'https://obsidian.md'},{n:'Calendar',u:'https://calendar.google.com'}]);
-function renderQuick(){const l=$('#linkList');l.innerHTML='';quick.forEach((q,i)=>{
-  const a=document.createElement('a');a.href=q.u;a.target='_blank';
-  a.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>${q.n} <b style="opacity:.4">✕</b>`;
-  a.querySelector('b').onclick=ev=>{ev.preventDefault();ev.stopPropagation();const o=confirm('删掉这个快捷入口？');if(o){quick.splice(i,1);ls.set('quick',quick);renderQuick()}};
-  l.appendChild(a)})}
-$('#addLinkChip').onclick=()=>{$('#linkAddRow').style.display='flex'};
-$('#linkSave').onclick=()=>{const n=$('#linkName').value.trim(),u=$('#linkUrl').value.trim();if(!n||!u)return;quick.push({n,u});ls.set('quick',quick);renderQuick();$('#linkName').value='';$('#linkUrl').value='';$('#linkAddRow').style.display='none';toast('加上了')};
-
-/* ---------- 课程表 ---------- */
-let sched=ls.get('sched',{days:[],data:{}});
-function parseSched(text){
-  const days=['周一','周二','周三','周四','周五','周六','周日'];
-  const rows=text.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
-  const dayset=new Set([],),data={};
-  rows.forEach(line=>{
-    const m=line.match(/^(周[一二三四五六日]|星期[一二三四五六日])\s*[：:行]\s*(.+)$/)||line.match(/^(周[一二三四五六日]|星期[一二三四五六日])\s+(.+)$/);
-    if(!m)return;const dn=m[1];const rest=m[2];
-    const dm=rest.match(/^(\d{1,2})[：:时到\-~](\d{1,2})?\s*(.+)$/);let seg=rest,txt='';
-    if(dm){seg=`${dm[1]}点`,txt=dm[3]||''} 
-    const di=days.indexOf(dn);if(di<0)return;dayset.add(di);
-    const key=`${dn} ${seg}`;data[dn]=data[dn]||[];data[dn].push({t:seg,c:txt||dn+'节'})});
-  return {days:Array.from(dayset).sort((a,b)=>a-b),data};
-}
-function renderSched(){
-  const area=$('#schedArea');
-  if(!sched.days.length){area.innerHTML='<div class="sched-empty">还没课程，右上可粘贴多行文本解析导入。</div>';return}
-  const dayn=['周一','周二','周三','周四','周五','周六','周日'];
-  let html='<table class="sched"><tr><th>时段</th>';
-  sched.days.forEach(d=>html+=`<th>${dayn[d]}</th>`);
-  html+='</tr>';
-  const all=(Object.values(sched.data).flat());
-  const times=[...new Set(all.map(x=>x.t))].sort((a,b)=>a.localeCompare(b));
-  times.forEach(t=>{
-    html+=`<tr><th class="cell-light">${t}</th>`;
-    sched.days.forEach(d=>{
-      const item=(sched.data[dayn[d]]||[]).find(x=>x.t===t);
-      html+=item?`<td>${item.c}</td>`:`<td></td>`});
-    html+='</tr>'});
-  html+='</table>';
-  area.innerHTML=html;
-}
-$('#schedApply').onclick=()=>{const v=$('#schedInp').value.trim();if(!v)return;const r=parseSched(v);
-  if(!r.days.length){toast('没解析出课程，确认每行是「周X 时间 内容」')}
-  Object.entries(r.data).forEach(([d,arr])=>{sched.data[d]=sched.data[d]||[];arr.forEach(x=>{if(!sched.data[d].some(y=>y.c===x.c&&y.t===x.t))sched.data[d].push(x)})});
-  r.days.forEach(d=>{if(!sched.days.includes(d))sched.days.push(d)});sched.days.sort((a,b)=>a-b);
-  ls.set('sched',sched);renderSched();toast('课程已并入')};
-$('#schedClear').onclick=()=>{sched={days:[],data:{}};ls.set('sched',sched);renderSched();toast('课程表已清空')};
-$('#exportCsv').onclick=()=>{let csv='时段,'+sched.days.map(d=>['周一','周二','周三','周四','周五','周六','周日'][d]).join(',')+'\n';
-  const all=Object.values(sched.data).flat();const ts=[...new Set(all.map(x=>x.t))].sort((a,b)=>a.localeCompare(b));
-  ts.forEach(t=>{csv+=t+','+sched.days.map(d=>{const it=(sched.data[['周一','周二','周三','周四','周五','周六','周日'][d]]||[]).find(x=>x.t===t);return it?it.c:''}).join(',')+'\n'});
-  download('schedule.csv',csv,'text/csv')};
-$('#exportJson').onclick=()=>download('schedule.json',JSON.stringify(sched,null,2),'application/json');
-function download(name,content,type){const b=new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();URL.revokeObjectURL(a.href)}
-
-/* ---------- 云同步 ---------- */
-const cfgKeys=['cfg_owner','cfg_repo','cfg_token'];
-cfgKeys.forEach(k=>{const el=document.getElementById(k);el.value=ls.get('k_'+k,'');el.addEventListener('input',e=>ls.set('k_'+k,e.target.value))});
-const API='https://api.github.com';
-function ghHeaders(){const t=$('#cfg_token').value.trim();return {Authorization:`Bearer ${t}`,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}}
-const ghUrl=()=>`${API}/repos/${$('#cfg_owner').value.trim()}/${$('#cfg_repo').value.trim()}/contents/data.json`;
-function setStatus(msg,cls){const e=$('#syncStatus');e.textContent=msg;e.className='sync-status'+(cls?' '+cls:'');e.classList.remove('ok','err');if(cls)e.classList.add(cls)}
-function dumpData(){return {todos,notes,sched,quick,updated:new Date().toISOString()}}
-function loadData(obj){todos=obj.todos||[];notes=obj.notes||[];sched=obj.sched||{days:[],data:{}};quick=obj.quick||quick;
-  ls.set('todos',todos);ls.set('notes',notes);ls.set('sched',sched);ls.set('quick',quick);
-  renderTodos();renderNotes();renderQuick();renderSched()}
-async function ghGetMeta(){const r=await fetch(ghUrl(),{headers:ghHeaders()});if(r.status===404)return null;
-  if(!r.ok)throw new Error('无法读取云端（'+(r.status)+'）');return await r.json()}
-$('#syncUp').onclick=async()=>{setStatus('备份中…');try{
-  const meta=await ghGetMeta();const content=btoa(unescape(encodeURIComponent(JSON.stringify(dumpData()))));
-  const body={message:'backup from workbench - '+new Date().toISOString(),content};
-  if(meta)body.sha=meta.sha;
-  const r=await fetch(ghUrl(),{method:meta?'PUT':'PUT',headers:ghHeaders(),body:JSON.stringify(body)});
-  if(!r.ok)throw new Error('上传失败（'+r.status+'）');
-  setStatus('已备份到云端，本地数据安全无恙。','ok')}catch(e){setStatus(e.message,'err')}};
-$('#syncDown').onload=async()=>{};
-$('#syncDown').onclick=async()=>{setStatus('拉取中…');try{
-  const meta=await ghGetMeta();if(!meta)throw new Error('云端还没有数据，先在某端点「备份」');
-  const raw=decodeURIComponent(escape(atob(meta.content)));
-  loadData(JSON.parse(raw));setStatus('已从云端拉取，本机内容已更新。','ok')}catch(e){setStatus(e.message,'err')}};
-$('#syncTest').onclick=async()=>{setStatus('连接中…');try{
-  const m=await ghGetMeta();setStatus('连接正常，云端当前'+(m?'已有数据（备份会覆盖它）':'暂无数据（首次备份会创建）'),'ok')}catch(e){setStatus(e.message,'err')}};
-function pingPush(){/* 清理占位，无操作 */}
 
 /* ---------- 实用工具箱 ---------- */
 (()=>{
@@ -774,33 +546,6 @@ function pingPush(){/* 清理占位，无操作 */}
     else toast('已复制')};
 })();
 
-/* ---------- 稍后读 · 收藏 ---------- */
-const CATS={灵感:'#6a4e8f',阅读:'#2d6a5f',工具:'#b0544f',资源:'#33658a'};
-function esc(s){return (s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-let cols=ls.get('col',[]);
-function colOk(){const f=document.getElementById('colFilter');f.innerHTML='<option value="all">全部分类</option>';
-  [...new Set(cols.map(c=>c.cat))].forEach(c=>f.add(new Option(c,c)));f.value=f.value||'all'}
-function renderCol(){const list=document.getElementById('colList');const filt=document.getElementById('colFilter').value;
-  list.innerHTML='';const shows=cols.filter(c=>filt==='all'||c.cat===filt);
-  shows.forEach((c,i)=>{const li=document.createElement('li');
-    li.innerHTML=`<span class="catdot" style="background:${CATS[c.cat]||'#999'}"></span>`+
-      `<span class="clk"><a href="${c.url?esc(c.url):'#'}" ${c.url?'target="_blank" rel="noopener"':''}>${esc(c.title)}</a>`+
-      (c.note?`<small>${esc(c.note)}</small>`:'')+`</span>`+
-      `<time style="font-size:10.5px;color:var(--ink3);flex:none">${c.t}</time>`+
-      `<button class="del" title="删除">✕</button>`;
-    li.querySelector('.del').onclick=()=>{cols.splice(i,1);ls.set('col',cols);colOk();renderCol();toast('删了')};
-    list.appendChild(li)});
-  document.getElementById('colCount').textContent=`共 ${cols.length} 条`}
-function addCol(){const title=document.getElementById('colTitle').value.trim();if(!title){toast('先填个标题');return}
-  cols.unshift({title,url:document.getElementById('colUrl').value.trim(),cat:document.getElementById('colCat').value,
-    note:document.getElementById('colNote').value.trim(),
-    t:new Date().toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})});
-  document.getElementById('colTitle').value='';document.getElementById('colUrl').value='';document.getElementById('colNote').value='';
-  ls.set('col',cols);colOk();renderCol();toast('收下了')}
-document.getElementById('colAdd').onclick=addCol;
-document.getElementById('colTitle').addEventListener('keydown',e=>{if(e.key==='Enter')addCol()});
-document.getElementById('colFilter').addEventListener('change',renderCol);
-
 /* ---------- 随机决策器 ---------- */
 const DECDEF={eat:['米饭配俩菜','面条','火锅','饺子','披萨','螺蛳粉','麻辣烫','自己随便做'],custom:['选项A','选项B','选项C']};
 let decMode='eat';
@@ -822,6 +567,39 @@ decEdit.onclick=()=>{const open=decEdit.dataset.open==='1';decEdit.dataset.open=
 document.getElementById('decOpts').addEventListener('input',e=>{
   if(decMode==='eat'||decMode==='custom')ls.set('popts_'+decMode,e.value.split(/\n/).map(s=>s.trim()).filter(Boolean))});
 
+/* ---------- 本地服务状态 ---------- */
+const SERVICES=[
+ {k:'ollama',n:'本地 Ollama',u:'http://localhost:11434'},
+ {k:'pages',n:'线上工作台',u:'https://w-lik721.github.io/workbench-app/index.html'},
+ {k:'net',n:'外网连通',u:'https://www.douyin.com'}
+];
+function chkOne(u){return fetch(u,{method:'GET',mode:'no-cors',cache:'no-store'}).then(()=>true).catch(()=>false)}
+function runSvc(){
+  document.querySelectorAll('#svcList .svc-item').forEach(it=>{
+    const s=it.querySelector('.s'),d=it.querySelector('.d');
+    s.className='s';d.className='d';d.textContent='检测中';
+    const svc=SERVICES.find(x=>x.k===it.dataset.k);
+    chkOne(svc.u).then(ok=>{s.className='s '+(ok?'ok':'bad');d.className='d '+(ok?'ok':'bad');d.textContent=ok?'在线':'不通'});
+  });
+}
+function svcRender(){const box=$('#svcList');box.innerHTML='';SERVICES.forEach(x=>{
+  const n=document.createElement('div');n.className='svc-item';n.dataset.k=x.k;
+  n.innerHTML=`<span class="s"></span><span class="n">${x.n}</span><span class="u">${x.u.replace(/^https?:\/\//,'')}</span><span class="d">检测中</span>`;
+  box.appendChild(n)});runSvc()}
+document.getElementById('svcRun').onclick=runSvc;
+
+/* ---------- 快捷键速查 ---------- */
+const SHORTCUTS=[
+ {k:'Ctrl + T',a:'新标签页'},{k:'Ctrl + W',a:'关当前标签'},
+ {k:'Ctrl + Shift + T',a:'恢复刚关的标签'},{k:'Ctrl + L',a:'定位地址栏'},
+ {k:'Ctrl + F',a:'页内查找'},{k:'Ctrl + D',a:'收藏当前页'},
+ {k:'Ctrl + Shift + N',a:'无痕窗口'},{k:'Ctrl + R',a:'刷新'},
+ {k:'Alt + ←',a:'后退'},{k:'Alt + →',a:'前进'},
+ {k:'Win + D',a:'回桌面'},{k:'Win + L',a:'锁屏'}
+];
+function renderShortcuts(){const box=$('#scList');box.innerHTML='';SHORTCUTS.forEach(x=>{
+  const d=document.createElement('div');d.className='sc';d.innerHTML=`<kbd>${x.k}</kbd><span>${x.a}</span>`;box.appendChild(d)})}
+
 /* ---------- 每日一言 ---------- */
 const DEFAULT_QUOTES=[
  {t:'慢慢来，比较快。',a:''},{t:'一次只做一件，做好再下一件。',a:''},
@@ -835,12 +613,40 @@ function showQ(){const today=new Date().toDateString();if(ls.get('q_refresh','')
 document.getElementById('qNext').onclick=pickQ;
 showQ();
 
-/* 键盘召唤搜索 */
-document.addEventListener('keydown',e=>{if(e.key==='/'&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();$('#act').scrollIntoView({behavior:'smooth'})}});
-$('#searchBtn').onclick=()=>{$('#act').scrollIntoView({behavior:'smooth'})};
+/* ---------- 云同步 ---------- */
+const cfgKeys=['cfg_owner','cfg_repo','cfg_token'];
+cfgKeys.forEach(k=>{const el=document.getElementById(k);el.value=ls.get('k_'+k,'');el.addEventListener('input',e=>ls.set('k_'+k,e.target.value))});
+const API='https://api.github.com';
+function ghHeaders(){const t=$('#cfg_token').value.trim();return {Authorization:`Bearer ${t}`,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}}
+const ghUrl=()=>`${API}/repos/${$('#cfg_owner').value.trim()}/${$('#cfg_repo').value.trim()}/contents/data.json`;
+function setStatus(msg,cls){const e=$('#syncStatus');e.textContent=msg;e.className='sync-status'+(cls?' '+cls:'');e.classList.remove('ok','err');if(cls)e.classList.add(cls)}
+const SYNCKEYS=['board','popts_eat','popts_custom'];
+function dumpData(){const o={v:2,updated:new Date().toISOString()};SYNCKEYS.forEach(k=>o[k]=ls.get(k,null));return o}
+function refreshUI(){const pb=document.getElementById('tBoard');if(pb)pb.value=ls.get('board','')}
+async function ghGetMeta(){const r=await fetch(ghUrl(),{headers:ghHeaders()});if(r.status===404)return null;
+  if(!r.ok)throw new Error('无法读取云端（'+(r.status)+'）');return await r.json()}
+$('#syncUp').onclick=async()=>{setStatus('备份中…');try{
+  const meta=await ghGetMeta();const content=btoa(unescape(encodeURIComponent(JSON.stringify(dumpData()))));
+  const body={message:'backup from workbench - '+new Date().toISOString(),content};
+  if(meta)body.sha=meta.sha;
+  const r=await fetch(ghUrl(),{method:meta?'PUT':'PUT',headers:ghHeaders(),body:JSON.stringify(body)});
+  if(!r.ok)throw new Error('上传失败（'+r.status+'）');
+  setStatus('已备份到云端，本地数据安全无恙。','ok')}catch(e){setStatus(e.message,'err')}};
+$('#syncDown').onclick=async()=>{setStatus('拉取中…');try{
+  const meta=await ghGetMeta();if(!meta)throw new Error('云端还没有数据，先在某端点「备份」');
+  const raw=decodeURIComponent(escape(atob(meta.content)));
+  const obj=JSON.parse(raw);
+  SYNCKEYS.forEach(k=>{if(obj&&obj[k]!==undefined)ls.set(k,obj[k])});
+  refreshUI();setStatus('已从云端拉取，本机内容已更新。','ok')}catch(e){setStatus(e.message,'err')}};
+$('#syncTest').onclick=async()=>{setStatus('连接中…');try{
+  const m=await ghGetMeta();setStatus('连接正常，云端当前'+(m?'已有数据（备份会覆盖它）':'暂无数据（首次备份会创建）'),'ok')}catch(e){setStatus(e.message,'err')}};
+
+/* 键盘召唤：斜杠回顶部模块 */
+document.addEventListener('keydown',e=>{if(e.key==='/'&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();$('#focus').scrollIntoView({behavior:'smooth'})}});
+$('#searchBtn').onclick=()=>{$('#focus').scrollIntoView({behavior:'smooth'})};
 
 /* 初始化 */
-mood();renderLaunch();renderTodos();renderNotes();renderFeed();renderQuick();renderSched();renderCol();colOk();pomUI();tick();
+mood();renderFeed();renderShortcuts();svcRender();pomUI();tick();
 </script>
 </body>
 </html>
