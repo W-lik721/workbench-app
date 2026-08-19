@@ -335,7 +335,7 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
       <section class="card wide" id="services">
         <h3><span class="idx">05</span>本地服务状态<span class="ctrl"><button class="chip" id="svcRun">检一遍</button></span></h3>
         <div class="svc" id="svcList"></div>
-        <p style="color:var(--ink3);font-size:12px">只探测在不在线，不碰你数据。Ollama 得开着才亮；在别的设备上打开时，本机的服务是另一个机器的。</p>
+        <p style="color:var(--ink3);font-size:12px">自动每 30 秒刷新一次，切回这个标签页也会重检。只探测在不在线，不碰你数据；Ollama 得开着才亮，在别的设备上打开时本机服务是另一个机器的。</p>
       </section>
 
       <!-- 快捷键速查 -->
@@ -587,6 +587,8 @@ function svcRender(){const box=$('#svcList');box.innerHTML='';SERVICES.forEach(x
   n.innerHTML=`<span class="s"></span><span class="n">${x.n}</span><span class="u">${x.u.replace(/^https?:\/\//,'')}</span><span class="d">检测中</span>`;
   box.appendChild(n)});runSvc()}
 document.getElementById('svcRun').onclick=runSvc;
+setInterval(runSvc,30000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)runSvc()});
 
 /* ---------- 快捷键速查 ---------- */
 const SHORTCUTS=[
