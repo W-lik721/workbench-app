@@ -170,11 +170,12 @@ html[data-theme=dark] .toolchip.on{color:#0c1016}
 .qshow b{font-size:16px;font-weight:500;line-height:1.55}
 .qshow span{font-size:12px;color:var(--ink3)}
 
-/* 08 快捷键 / 09 一言：等高固定 + 卡片内滚动（与动态一览一致） */
-#shortcuts,#quotes{display:flex;flex-direction:column;height:400px;overflow:hidden}
-#shortcuts h3,#quotes h3{flex:none}
-#shortcuts #scList{flex:1 1 0;min-height:0;overflow-y:auto;align-content:start;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--ink3) 55%,transparent) transparent;padding-right:2px}
-#quotes #qShow{flex:1 1 0;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--ink3) 55%,transparent) transparent}
+/* 统一卡片：等高固定 + 内容区卡片内滚动 */
+.cols .card{display:flex;flex-direction:column;height:400px;overflow:hidden}
+.cols .card h3,.cols .card .tabs,.cols .card>p{flex:none}
+#shortcuts #scList,#quotes #qShow,#daily #dShow,#services #svcList,#sysinfo #sysInfo{flex:1 1 0;align-content:start;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--ink3) 55%,transparent) transparent;padding-right:2px}
+#tools .tool-panel{flex:1 1 0;align-content:start;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--ink3) 55%,transparent) transparent}
+#sync .syncbox{flex:1 1 0;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--ink3) 55%,transparent) transparent}
 
 footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px;padding-top:30px;letter-spacing:.5px}
 
