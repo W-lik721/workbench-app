@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>青灯台 · 个人工作台</title>
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect x="9" y="2" width="14" height="3.5" rx="1.75" fill="%2326499b"/><path d="M13 6.5h6v7c0 4.5-3.4 6.5-3.4 6.5s-3.4-2-3.4-6.5z" fill="%23c97b3a"/><path d="M10.5 23.5c3.6 2.2 7.4 2.2 11 0" stroke="%236b665b" stroke-width="2.2" fill="none" stroke-linecap="round"/><circle cx="16" cy="13" r="2.4" fill="%23fff6"/></svg>'>
 <style>
 :root{
   --bg:#f5f2ec; --bg2:#efece4; --card:#fffffc; --line:#e3ded2; --line2:#d6d0c2;
@@ -183,12 +184,25 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
   .wrap{grid-template-columns:1fr}
   nav.rail{position:static;flex-direction:row;flex-wrap:wrap;gap:4px;border:1px solid var(--line);border-radius:12px;padding:8px;background:var(--card)}
   nav.rail .rail-title{display:none}
-  main.cols{grid-template-columns:1fr}
+  main.cols{grid-template-columns:1fr;gap:16px}
+  /* 窄屏：专注段+动态一览改为上下堆叠，避免两列挤在手机宽度上 */
+  .row02{flex-direction:column;gap:16px}
+  /* 网格类在窄屏收成单列，避免内容被压扁 */
+  .sync-meta,.toolgrid{grid-template-columns:1fr}
 }
 @media(max-width:560px){
-  .hero h1{font-size:24px}
+  .hero h1{font-size:22px}
   .top .date{display:none}
   .sc-grid{grid-template-columns:1fr}
+  .wrap{padding:14px 12px 56px;gap:16px}
+  .card{padding:14px;gap:10px}
+  .hero{padding:6px 2px 15px}
+  /* 页签允许横向滚动，避免被挤出卡片 */
+  .tabs{max-width:100%;overflow-x:auto}
+  .timerimg{width:130px;height:130px}
+  .timerimg svg{width:130px;height:130px}
+  .trans-big{font-size:16px}
+  .sync-meta input{font-size:12px}
 }
 </style>
 </head>
