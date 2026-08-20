@@ -185,8 +185,10 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
   nav.rail{position:static;flex-direction:row;flex-wrap:wrap;gap:4px;border:1px solid var(--line);border-radius:12px;padding:8px;background:var(--card)}
   nav.rail .rail-title{display:none}
   main.cols{grid-template-columns:1fr;gap:16px}
-  /* 窄屏：专注段+动态一览改为上下堆叠，避免两列挤在手机宽度上 */
+  /* 窄屏：专注段+动态一览改为上下堆叠，避免两列挤在手机宽度上。
+     注意：列方向下 flex-basis:0 会接管高度，必须禁用 flex 伸缩并锁回 400px，否则两卡塌缩 */
   .row02{flex-direction:column;gap:16px}
+  .row02>.card{flex:none;height:400px}
   /* 网格类在窄屏收成单列，避免内容被压扁 */
   .sync-meta,.toolgrid{grid-template-columns:1fr}
 }
