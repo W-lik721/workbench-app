@@ -178,6 +178,22 @@ html[data-theme=dark] .toolchip.on{color:#0c1016}
 #tools .tool-panel{flex:1 1 0;align-content:start;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--ink3) 55%,transparent) transparent}
 #sync .syncbox{flex:1 1 0;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--ink3) 55%,transparent) transparent}
 
+/* 节假日倒计时 */
+.fest{flex:1 1 0;min-height:0;overflow-y:auto;display:flex;gap:16px;align-items:stretch;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--ink3) 55%,transparent) transparent;padding-right:2px}
+.fest-main{flex:1.05;border:1px solid var(--line2);border-radius:11px;padding:18px 20px;display:flex;flex-direction:column;justify-content:center;gap:5px;min-width:0;
+  background:radial-gradient(420px 220px at 90% -30%,color-mix(in srgb,var(--accent) 14%,transparent),transparent 70%),linear-gradient(180deg,color-mix(in srgb,var(--brand) 6%,var(--bg2)),var(--bg2))}
+.fest-main .tag{font-size:11px;letter-spacing:2px;color:var(--accent);font-weight:600}
+.fest-main .nm{font-size:21px;font-weight:700}
+.fest-main .days{font-size:44px;font-weight:700;line-height:1.05;color:var(--brand);font-variant-numeric:tabular-nums}
+.fest-main .dt{font-size:12.5px;color:var(--ink2)}
+.fest-main .dt.hl{color:var(--warn);font-weight:600}
+.fest-list{flex:1.25;display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start;min-width:0}
+.fest-item{border:1px solid var(--line);border-radius:9px;padding:11px 13px;background:var(--bg2);display:flex;flex-direction:column;gap:3px;min-width:0}
+.fest-item .nm{font-size:13px;font-weight:600}
+.fest-item .dt{font-size:11px;color:var(--ink3)}
+.fest-item .d{font-size:16px;font-weight:700;color:var(--brand);font-variant-numeric:tabular-nums;margin-top:2px}
+.fest-item .d.today{color:var(--accent)}
+
 footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px;padding-top:30px;letter-spacing:.5px}
 
 @media(max-width:960px){
@@ -191,6 +207,9 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
   .row02>.card{flex:none;height:400px}
   /* 网格类在窄屏收成单列，避免内容被压扁 */
   .sync-meta,.toolgrid{grid-template-columns:1fr}
+  .fest{flex-direction:column}
+  .fest-main{padding:14px 16px}
+  .fest-main .days{font-size:34px}
 }
 @media(max-width:560px){
   .hero h1{font-size:22px}
@@ -237,14 +256,15 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
     <div class="rail-title">导览</div>
     <a href="#focus"><span class="n">01</span>专注段 <span class="dot">·</span></a>
     <a href="#feed"><span class="n">02</span>动态 <span class="dot">·</span></a>
-    <a href="#tools"><span class="n">03</span>工具 <span class="dot">·</span></a>
-    <a href="#decision"><span class="n">04</span>随机 <span class="dot">·</span></a>
-    <a href="#services"><span class="n">05</span>服务 <span class="dot">·</span></a>
-    <a href="#sysinfo"><span class="n">06</span>设备 <span class="dot">·</span></a>
-    <a href="#daily"><span class="n">07</span>今日一学 <span class="dot">·</span></a>
-    <a href="#shortcuts"><span class="n">08</span>快捷键 <span class="dot">·</span></a>
-    <a href="#quotes"><span class="n">09</span>一言 <span class="dot">·</span></a>
-    <a href="#sync"><span class="n">10</span>云同步 <span class="dot">·</span></a>
+    <a href="#fest"><span class="n">03</span>节假日 <span class="dot">·</span></a>
+    <a href="#tools"><span class="n">04</span>工具 <span class="dot">·</span></a>
+    <a href="#decision"><span class="n">05</span>随机 <span class="dot">·</span></a>
+    <a href="#services"><span class="n">06</span>服务 <span class="dot">·</span></a>
+    <a href="#sysinfo"><span class="n">07</span>设备 <span class="dot">·</span></a>
+    <a href="#daily"><span class="n">08</span>今日一学 <span class="dot">·</span></a>
+    <a href="#shortcuts"><span class="n">09</span>快捷键 <span class="dot">·</span></a>
+    <a href="#quotes"><span class="n">10</span>一言 <span class="dot">·</span></a>
+    <a href="#sync"><span class="n">11</span>云同步 <span class="dot">·</span></a>
   </nav>
 
   <div>
@@ -291,9 +311,18 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
       </section>
 
       </div><!--/row02-->
+      <!-- 节假日倒计时 -->
+      <section class="card wide" id="fest">
+        <h3><span class="idx">03</span>节假日倒计时</h3>
+        <div class="fest">
+          <div class="fest-main" id="festMain"></div>
+          <div class="fest-list" id="festList"></div>
+        </div>
+      </section>
+
       <!-- 实用工具箱 -->
       <section class="card" id="tools">
-        <h3><span class="idx">03</span>实用工具箱<span class="ctrl"><button class="chip" id="toolCopy">复制结果</button></span></h3>
+        <h3><span class="idx">04</span>实用工具箱<span class="ctrl"><button class="chip" id="toolCopy">复制结果</button></span></h3>
         <div class="tabs" id="toolTabs">
           <button class="on" data-t="color">取色</button>
           <button data-t="conv">换算</button>
@@ -347,7 +376,7 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
 
       <!-- 随机决策器 -->
       <section class="card" id="decision">
-        <h3><span class="idx">04</span>随机决策器</h3>
+        <h3><span class="idx">05</span>随机决策器</h3>
         <div class="toolrow" style="justify-content:center">
           <span class="toolchip dec-m on" data-m="eat">吃啥</span>
           <span class="toolchip dec-m" data-m="coin">硬币</span>
@@ -366,38 +395,38 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
 
       <!-- 本地服务状态 -->
       <section class="card wide" id="services">
-        <h3><span class="idx">05</span>本地服务状态<span class="ctrl"><button class="chip" id="svcRun">检一遍</button></span></h3>
+        <h3><span class="idx">06</span>本地服务状态<span class="ctrl"><button class="chip" id="svcRun">检一遍</button></span></h3>
         <div class="svc" id="svcList"></div>
         <p style="color:var(--ink3);font-size:12px">自动每 30 秒刷新一次，切回这个标签页也会重检。只探测在不在线，不碰你数据；Ollama 得开着才亮，在别的设备上打开时本机服务是另一个机器的。</p>
       </section>
 
       <!-- 设备信息 -->
       <section class="card" id="sysinfo">
-        <h3><span class="idx">06</span>设备信息</h3>
+        <h3><span class="idx">07</span>设备信息</h3>
         <div class="toolgrid" id="sysInfo"></div>
       </section>
 
       <!-- 今日一学 -->
       <section class="card" id="daily">
-        <h3><span class="idx">07</span>今日一学<span class="ctrl"><button class="chip" id="dNext">换一条</button></span></h3>
+        <h3><span class="idx">08</span>今日一学<span class="ctrl"><button class="chip" id="dNext">换一条</button></span></h3>
         <div class="qshow" id="dShow"></div>
       </section>
 
       <!-- 快捷键速查 -->
       <section class="card" id="shortcuts">
-        <h3><span class="idx">08</span>快捷键速查</h3>
+        <h3><span class="idx">09</span>快捷键速查</h3>
         <div class="sc-grid" id="scList"></div>
       </section>
 
       <!-- 每日一言 -->
       <section class="card" id="quotes">
-        <h3><span class="idx">09</span>每日一言<span class="ctrl"><button class="chip" id="qNext">换一句</button></span></h3>
+        <h3><span class="idx">10</span>每日一言<span class="ctrl"><button class="chip" id="qNext">换一句</button></span></h3>
         <div class="qshow" id="qShow"></div>
       </section>
 
       <!-- 云同步 -->
       <section class="card wide" id="sync">
-        <h3><span class="idx">10</span>云同步<span class="ctrl"><button class="chip" id="syncTest">测试连接</button></span></h3>
+        <h3><span class="idx">11</span>云同步<span class="ctrl"><button class="chip" id="syncTest">测试连接</button></span></h3>
         <p style="color:var(--ink3);font-size:12.5px">数据存在私有仓库的 <code>data.json</code>。备份=把本机传上去；拉取=把云端拿下来；改动会在本机缓存，方便离线用。</p>
         <div class="syncbox">
           <div class="sync-meta">
@@ -488,6 +517,7 @@ const FEED={
   {d:'今天',type:'r',c:'状态自检 · 网络 / 电源 / 硬件 / 本地服务实时检测'},
   {d:'今天',type:'r',c:'设备信息 · 本机内存、CPU、屏幕参数一览'},
   {d:'今天',type:'l',c:'今日一学 · 每天一条实用小知识'},
+  {d:'今天',type:'m',c:'节假日倒计时 · 下一个假期差几天，一眼看清'},
   {d:'今天',type:'m',c:'随机决策 · 纠结时让选项自己选一个'},
   {d:'今天',type:'m',c:'灵感名言 · 每天自动换一句坐镇'}],
  '40':[
@@ -809,12 +839,39 @@ $('#syncDown').onclick=async()=>{setStatus('拉取中…');try{
 $('#syncTest').onclick=async()=>{setStatus('连接中…');try{
   const m=await ghGetMeta();setStatus('连接正常，云端当前'+(m?'已有数据（备份会覆盖它）':'暂无数据（首次备份会创建）'),'ok')}catch(e){setStatus(e.message,'err')}};
 
+/* ---------- 节假日倒计时 ---------- */
+const HOLIDAYS=[
+  ['中秋',2026,9,25],['国庆',2026,10,1],
+  ['元旦',2027,1,1],['春节',2027,2,6],['清明',2027,4,5],['劳动节',2027,5,1],['端午',2027,6,9],['中秋',2027,9,15],['国庆',2027,10,1],
+  ['元旦',2028,1,1],['春节',2028,1,26]
+].map(function(h){return{n:h[0],d:new Date(h[1],h[2]-1,h[3])}});
+const WDSTR=['周日','周一','周二','周三','周四','周五','周六'];
+function festDiff(s){return Math.round((s-today0())/86400000)}
+function today0(){const d=new Date();d.setHours(0,0,0,0);return d}
+function renderFest(){
+  const today=today0();
+  const up=HOLIDAYS.filter(function(h){return h.d>=today}).sort(function(a,b){return a.d-b.d});
+  const mm=$('#festMain'),list=$('#festList');
+  if(!up.length){mm.innerHTML='<p class="dt">内置的假期还没有排到往后，先歇会儿，过阵子更新。</p>';list.innerHTML='';return}
+  const n0=up[0];const diff=festDiff(n0.d);
+  mm.innerHTML='<div class="tag">下一个法定假期</div>'+
+    '<div class="nm">'+n0.n+'</div>'+
+    '<div class="days">'+(diff<=0?'就是今天':diff+' 天')+'</div>'+
+    '<div class="dt'+(diff===1?' hl':'')+'">'+(n0.d.getMonth()+1)+'月'+n0.d.getDate()+'日 · '+WDSTR[n0.d.getDay()]+(diff===1?' · 明天就到':(diff===0?' · 好好过':' · 还有 '+diff+' 天'))+'</div>';
+  list.innerHTML=up.slice(1,5).map(function(h){
+    const dd=festDiff(h.d);
+    return '<div class="fest-item"><div class="nm">'+h.n+'</div>'+
+      '<div class="dt">'+(h.d.getMonth()+1)+'月'+h.d.getDate()+'日 · '+WDSTR[h.d.getDay()]+'</div>'+
+      '<div class="d'+(dd<=0?' today':'')+'">'+(dd<=0?'今天':dd+' 天后')+'</div></div>';
+  }).join('');
+}
+
 /* 键盘召唤：斜杠回顶部模块 */
 document.addEventListener('keydown',e=>{if(e.key==='/'&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();$('#focus').scrollIntoView({behavior:'smooth'})}});
 $('#searchBtn').onclick=()=>{$('#focus').scrollIntoView({behavior:'smooth'})};
 
 /* 初始化 */
-mood();renderFeed();renderShortcuts();svcRender();pomUI();tick();
+mood();renderFeed();renderFest();renderShortcuts();svcRender();pomUI();tick();
 </script>
 </body>
 </html>
