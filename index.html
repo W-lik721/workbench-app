@@ -194,6 +194,26 @@ html[data-theme=dark] .toolchip.on{color:#0c1016}
 .fest-item .d{font-size:16px;font-weight:700;color:var(--brand);font-variant-numeric:tabular-nums;margin-top:2px}
 .fest-item .d.today{color:var(--accent)}
 
+/* 实时天气 */
+.weath{flex:1 1 0;min-height:0;overflow-y:auto;display:flex;gap:16px;align-items:stretch;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--ink3) 55%,transparent) transparent;padding-right:2px}
+.weath-main{flex:1.15;border:1px solid var(--line2);border-radius:11px;padding:16px 20px;display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0;
+  background:radial-gradient(380px 200px at 12% -30%,color-mix(in srgb,var(--brand) 16%,transparent),transparent 70%),linear-gradient(180deg,color-mix(in srgb,var(--brand) 5%,var(--bg2)),var(--bg2))}
+.weath-main .loc{font-size:12px;color:var(--ink2)}
+.weath-main .loc b{color:var(--ink);font-weight:600}
+.weath-main .cond{font-size:14px;font-weight:600;color:var(--brand)}
+.weath-main .temp{font-size:48px;font-weight:700;line-height:1.05;font-variant-numeric:tabular-nums}
+.weath-main .stats{display:flex;flex-wrap:wrap;gap:5px 14px;margin-top:5px;font-size:12px;color:var(--ink2)}
+.weath-main .stats span{display:inline-flex;gap:4px;align-items:center}
+.weath-main .upd{font-size:10.5px;color:var(--ink3);opacity:.8}
+.weath-grid{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-content:start;min-width:0}
+.weath-day{border:1px solid var(--line);border-radius:9px;padding:11px 13px;background:var(--bg2);display:flex;flex-direction:column;gap:2px;min-width:0}
+.weath-day.on{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 9%,var(--bg2))}
+.weath-day .wd{font-size:12.5px;font-weight:600}
+.weath-day .dd{font-size:10.5px;color:var(--ink3)}
+.weath-day .cd{font-size:11.5px;color:var(--brand);margin-top:4px}
+.weath-day .tm{font-size:14px;font-weight:700;margin-top:2px}
+.weath-day .tm .lo{color:var(--ink3);font-weight:500;margin-left:3px}
+
 footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px;padding-top:30px;letter-spacing:.5px}
 
 @media(max-width:960px){
@@ -210,6 +230,10 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
   .fest{flex-direction:column}
   .fest-main{padding:14px 16px}
   .fest-main .days{font-size:34px}
+  .weath{flex-direction:column}
+  .weath-main{padding:14px 16px}
+  .weath-main .temp{font-size:38px}
+  .weath-grid{grid-template-columns:repeat(3,1fr)}
 }
 @media(max-width:560px){
   .hero h1{font-size:22px}
@@ -257,14 +281,15 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
     <a href="#focus"><span class="n">01</span>专注段 <span class="dot">·</span></a>
     <a href="#feed"><span class="n">02</span>动态 <span class="dot">·</span></a>
     <a href="#fest"><span class="n">03</span>节假日 <span class="dot">·</span></a>
-    <a href="#tools"><span class="n">04</span>工具 <span class="dot">·</span></a>
-    <a href="#decision"><span class="n">05</span>随机 <span class="dot">·</span></a>
-    <a href="#services"><span class="n">06</span>服务 <span class="dot">·</span></a>
-    <a href="#sysinfo"><span class="n">07</span>设备 <span class="dot">·</span></a>
-    <a href="#daily"><span class="n">08</span>今日一学 <span class="dot">·</span></a>
-    <a href="#shortcuts"><span class="n">09</span>快捷键 <span class="dot">·</span></a>
-    <a href="#quotes"><span class="n">10</span>一言 <span class="dot">·</span></a>
-    <a href="#sync"><span class="n">11</span>云同步 <span class="dot">·</span></a>
+    <a href="#weather"><span class="n">04</span>天气 <span class="dot">·</span></a>
+    <a href="#tools"><span class="n">05</span>工具 <span class="dot">·</span></a>
+    <a href="#decision"><span class="n">06</span>随机 <span class="dot">·</span></a>
+    <a href="#services"><span class="n">07</span>服务 <span class="dot">·</span></a>
+    <a href="#sysinfo"><span class="n">08</span>设备 <span class="dot">·</span></a>
+    <a href="#daily"><span class="n">09</span>今日一学 <span class="dot">·</span></a>
+    <a href="#shortcuts"><span class="n">10</span>快捷键 <span class="dot">·</span></a>
+    <a href="#quotes"><span class="n">11</span>一言 <span class="dot">·</span></a>
+    <a href="#sync"><span class="n">12</span>云同步 <span class="dot">·</span></a>
   </nav>
 
   <div>
@@ -320,9 +345,18 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
         </div>
       </section>
 
+      <!-- 实时天气 -->
+      <section class="card wide" id="weather">
+        <h3><span class="idx">04</span>实时天气<span class="ctrl"><button class="chip" id="weathRefresh">刷新</button></span></h3>
+        <div class="weath">
+          <div class="weath-main" id="weathMain">正在定位与取天气…</div>
+          <div class="weath-grid" id="weathGrid"></div>
+        </div>
+      </section>
+
       <!-- 实用工具箱 -->
       <section class="card" id="tools">
-        <h3><span class="idx">04</span>实用工具箱<span class="ctrl"><button class="chip" id="toolCopy">复制结果</button></span></h3>
+        <h3><span class="idx">05</span>实用工具箱<span class="ctrl"><button class="chip" id="toolCopy">复制结果</button></span></h3>
         <div class="tabs" id="toolTabs">
           <button class="on" data-t="color">取色</button>
           <button data-t="conv">换算</button>
@@ -376,7 +410,7 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
 
       <!-- 随机决策器 -->
       <section class="card" id="decision">
-        <h3><span class="idx">05</span>随机决策器</h3>
+        <h3><span class="idx">06</span>随机决策器</h3>
         <div class="toolrow" style="justify-content:center">
           <span class="toolchip dec-m on" data-m="eat">吃啥</span>
           <span class="toolchip dec-m" data-m="coin">硬币</span>
@@ -395,38 +429,38 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
 
       <!-- 本地服务状态 -->
       <section class="card wide" id="services">
-        <h3><span class="idx">06</span>本地服务状态<span class="ctrl"><button class="chip" id="svcRun">检一遍</button></span></h3>
+        <h3><span class="idx">07</span>本地服务状态<span class="ctrl"><button class="chip" id="svcRun">检一遍</button></span></h3>
         <div class="svc" id="svcList"></div>
         <p style="color:var(--ink3);font-size:12px">自动每 30 秒刷新一次，切回这个标签页也会重检。只探测在不在线，不碰你数据；Ollama 得开着才亮，在别的设备上打开时本机服务是另一个机器的。</p>
       </section>
 
       <!-- 设备信息 -->
       <section class="card" id="sysinfo">
-        <h3><span class="idx">07</span>设备信息</h3>
+        <h3><span class="idx">08</span>设备信息</h3>
         <div class="toolgrid" id="sysInfo"></div>
       </section>
 
       <!-- 今日一学 -->
       <section class="card" id="daily">
-        <h3><span class="idx">08</span>今日一学<span class="ctrl"><button class="chip" id="dNext">换一条</button></span></h3>
+        <h3><span class="idx">09</span>今日一学<span class="ctrl"><button class="chip" id="dNext">换一条</button></span></h3>
         <div class="qshow" id="dShow"></div>
       </section>
 
       <!-- 快捷键速查 -->
       <section class="card" id="shortcuts">
-        <h3><span class="idx">09</span>快捷键速查</h3>
+        <h3><span class="idx">10</span>快捷键速查</h3>
         <div class="sc-grid" id="scList"></div>
       </section>
 
       <!-- 每日一言 -->
       <section class="card" id="quotes">
-        <h3><span class="idx">10</span>每日一言<span class="ctrl"><button class="chip" id="qNext">换一句</button></span></h3>
+        <h3><span class="idx">11</span>每日一言<span class="ctrl"><button class="chip" id="qNext">换一句</button></span></h3>
         <div class="qshow" id="qShow"></div>
       </section>
 
       <!-- 云同步 -->
       <section class="card wide" id="sync">
-        <h3><span class="idx">11</span>云同步<span class="ctrl"><button class="chip" id="syncTest">测试连接</button></span></h3>
+        <h3><span class="idx">12</span>云同步<span class="ctrl"><button class="chip" id="syncTest">测试连接</button></span></h3>
         <p style="color:var(--ink3);font-size:12.5px">数据存在私有仓库的 <code>data.json</code>。备份=把本机传上去；拉取=把云端拿下来；改动会在本机缓存，方便离线用。</p>
         <div class="syncbox">
           <div class="sync-meta">
@@ -866,12 +900,70 @@ function renderFest(){
   }).join('');
 }
 
+/* ---------- 实时天气 ---------- */
+const WCODE={113:'晴',116:'多云',119:'阴',122:'阴',143:'雾',248:'雾',260:'冻雾',
+ 176:'小阵雨',179:'阵雪',182:'雨夹雪',185:'冻毛毛雨',200:'雷阵雨',227:'大风吹雪',230:'暴雪',
+ 263:'毛毛雨',266:'毛毛雨',281:'冻毛毛雨',284:'强冻雨',
+ 293:'小阵雨',296:'小雨',299:'中雨',302:'中雨',305:'大雨',308:'大雨',
+ 311:'冻雨',314:'强冻雨',317:'雨夹雪',320:'雨夹雪',
+ 323:'小雪',326:'小雪',329:'中雪',332:'中雪',335:'大雪',338:'大雪',350:'冰粒',
+ 353:'阵雨',356:'阵雨',359:'暴雨',362:'阵雨夹雪',365:'雨夹雪',368:'阵雪',371:'雪阵',374:'冰粒',377:'冰粒',
+ 386:'雷阵雨',389:'雷暴大雨',392:'雷阵雪',395:'雷暴大雪'};
+function wcond(c){return WCODE[c]||'—'}
+function wdzh(dateStr){const d=new Date(dateStr+'T00:00:00');return WDSTR[d.getDay()]}
+function renderWeather(w,city){
+  const cur=w&&w.current_condition&&w.current_condition[0];
+  if(!cur){$('#weathMain').innerHTML='<div class="loc">天气数据还没到，稍后再看。</div>';return}
+  const na=w&&w.nearest_area&&w.nearest_area[0];
+  const loc=na?
+    [na.areaName&&na.areaName[0].value,na.region&&na.region[0].value].filter(Boolean).join(' '):
+    (city||'我这儿');
+  const mm=$('#weathMain');
+  mm.innerHTML='<div class="loc">'+loc+'</div>'+
+    '<div class="cond">'+wcond(+cur.weatherCode)+'</div>'+
+    '<div class="temp">'+cur.temp_C+'°C</div>'+
+    '<div class="stats">'+
+      '<span>体感 '+cur.FeelsLikeC+'°</span>'+
+      '<span>湿度 '+cur.humidity+'%</span>'+
+      '<span>风 '+cur.windspeedKmph+' km/h</span>'+
+      '<span>气压 '+cur.pressure+' hPa</span>'+
+    '</div>'+
+    '<div class="upd">更新于 '+new Date().toTimeString().slice(0,5)+'</div>';
+  const days=(w.weather||[]).slice(0,3);
+  $('#weathGrid').innerHTML=days.length?days.map(function(d,i){
+    const hh=d.hourly&&d.hourly[6];
+    const cd=wcond(hh?+hh.weatherCode:113);
+    return '<div class="weath-day'+(i===0?' on':'')+'"><div class="wd">'+(i===0?'今天':wdzh(d.date))+'</div>'+
+      '<div class="dd">'+d.date.slice(5).replace('-','/')+'</div>'+
+      '<div class="cd">'+cd+'</div>'+
+      '<div class="tm">'+d.maxtempC+'°<span class="lo">'+d.mintempC+'°</span></div></div>';
+  }).join(''):'<div class="loc">预报还没拉到。</div>';
+}
+async function loadWeather(){
+  $('#weathMain').innerHTML='<div class="loc">正在定位与取天气…</div>';
+  let lat=39.9042,lon=116.4074,city='北京';
+  try{
+    const g=await fetch('https://ipwho.is/').then(function(r){return r.json()});
+    if(g&&g.success!==false&&g.latitude!==undefined&&g.latitude!==null){
+      lat=g.latitude;lon=g.longitude;
+      const parts=[g.city,g.region,g.country].filter(Boolean).map(function(x){return String(x)}).slice(0,2);
+      city=parts.join(' ')||'我这儿';
+    }
+  }catch(e){}
+  try{
+    const w=await fetch('https://wttr.in/'+lat+','+lon+'?format=j1&lang=zh').then(function(r){return r.json()});
+    renderWeather(w,city);
+  }catch(e){$('#weathMain').innerHTML='<div class="loc">天气接口没拉到，稍后再看。</div>';}
+}
+$('#weathRefresh').onclick=loadWeather;
+setInterval(function(){if(!document.hidden)loadWeather()},30*60*1000);
+
 /* 键盘召唤：斜杠回顶部模块 */
 document.addEventListener('keydown',e=>{if(e.key==='/'&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();$('#focus').scrollIntoView({behavior:'smooth'})}});
 $('#searchBtn').onclick=()=>{$('#focus').scrollIntoView({behavior:'smooth'})};
 
 /* 初始化 */
-mood();renderFeed();renderFest();renderShortcuts();svcRender();pomUI();tick();
+mood();renderFeed();renderFest();renderShortcuts();svcRender();pomUI();loadWeather();tick();
 </script>
 </body>
 </html>
