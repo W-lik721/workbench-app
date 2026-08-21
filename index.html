@@ -120,22 +120,6 @@ html[data-theme=dark] .tabs button.on{color:#0c1016}
 .vitem .c span{font-size:11px;color:var(--ink3)}
 .empty{color:var(--ink3);font-size:12.5px;padding:10px 0}
 
-/* 热榜 */
-.hotsec{margin-bottom:10px}
-.hot-head{display:flex;align-items:baseline;gap:8px;margin:2px 0 8px}
-.hot-head b{font-size:13px;color:var(--ink)}
-.hot-head span{font-size:11px;color:var(--ink3)}
-.hot-head .frs{margin-left:auto;font-size:11px;color:var(--brand);cursor:pointer;user-select:none}
-.hot-head .frs:hover{text-decoration:underline}
-.hotitem{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:6px 11px;background:var(--bg2);margin-bottom:6px}
-.hotitem .rk{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.5;flex:none;min-width:18px;text-align:center}
-.hotitem .ct{flex:1;min-width:0}
-.hotitem .ct p{font-size:13px;line-height:1.45}
-.hotitem .ct span{font-size:11px;color:var(--ink3)}
-.hotitem .ht{font-size:11px;color:var(--ink3);flex:none;font-variant-numeric:tabular-nums}
-.hotitem .rk.top{color:#ff4d4f}
-.hotitem .rk.mid{color:#ff7a45}
-
 /* 云同步 */
 .syncbox{margin-top:8px}
 .sync-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
@@ -1242,7 +1226,7 @@ const FEED={
   {d:'现在',type:'r',c:'服务都挺正常。本地这块没出岔子。'}]
 };
 const FCOLS={l:['#4e7c4a',0],g:['#33658a',1],r:['#4e7c4a',0],m:['#b8860b',1]};
-const FKEY={10:'能力',20:'AI',30:'新闻',40:'状态',50:'热榜'};
+const FKEY={10:'能力',20:'AI',30:'新闻',40:'状态'};
 const FTYPE={l:'学习',g:'资讯',r:'运行',m:'改善'};
 let feedTab='20';
 
@@ -1318,49 +1302,11 @@ function renderStatus(){
 window.addEventListener('online',()=>{if(feedTab==='40')renderStatus()});
 window.addEventListener('offline',()=>{if(feedTab==='40')renderStatus()});
 setInterval(()=>{if(feedTab==='40')renderStatus()},30000);
-/* 热榜（数据源：定时抓取的 hotlists.json，避免浏览器直连官方接口被 CORS 拦） */
-let hotCache=null,hotAt=0;
-const HOT_URL='https://w-lik721.github.io/workbench-app/hotlists.json';
-const HOT_FALLBACK=['https://raw.githubusercontent.com/W-lik721/workbench-app/main/hotlists.json'];
-const HOT_SRC={baidu:'百度热搜',bilibili:'哔哩哔哩热门'};
-async function hotFetch(force){
-  if(hotCache&&!force&&Date.now()-hotAt<5*60*1000)return hotCache;
-  const urls=[HOT_URL].concat(HOT_FALLBACK);
-  for(const u of urls){
-    try{
-      const r=await fetch(u+'?t='+Date.now());if(!r.ok)continue;
-      const d=await r.json();if(d&&d.sources){hotCache=d;hotAt=Date.now();return d}
-    }catch(_){}
-  }
-  return hotCache;
-}
-function renderHot(force){
-  const list=$('#feedList');
-  list.innerHTML='<div class="empty">热榜加载中…</div>';
-  hotFetch(force).then(d=>{
-    if(!d||!d.sources){list.innerHTML='<div class="empty">热榜数据还没拉取，稍后刷新再看。</div>';return}
-    const when=d.fetched_at?('更新 '+d.fetched_at.slice(5,16)):'';
-    let out='';
-    Object.keys(HOT_SRC).forEach(k=>{
-      const items=d.sources[k]||[];if(!items.length)return;
-      out+='<div class="hotsec"><div class="hot-head"><b>'+HOT_SRC[k]+'</b><span>'+when+'</span><span class="frs" title="重新抓取">刷新</span></div>';
-      items.slice(0,15).forEach((it,i)=>{
-        const rk=i+1;
-        out+='<div class="hotitem"><span class="rk '+(rk===1?'top':(rk===2?'mid':''))+'">'+rk+'</span>'+
-          '<div class="ct"><p>'+esc(it&&it.t||'')+'</p>'+(it&&it.h?'<span>'+esc(it.h)+'</span>':'')+'</div></div>';
-      });
-      out+='</div>';
-    });
-    list.innerHTML=out||'<div class="empty">热榜数据还是空的，稍后再试。</div>';
-    list.querySelectorAll('.hot-head .frs').forEach(b=>{b.onclick=()=>renderHot(true)});
-  });
-}
 function renderFeed(){
   const tabs=$('#feedTabs');tabs.innerHTML='';Object.keys(FKEY).forEach(k=>{
     const b=document.createElement('button');b.textContent=FKEY[k];b.className=k===feedTab?'on':'';b.onclick=()=>{feedTab=k;renderFeed()};tabs.appendChild(b)});
   if(feedTab==='20'||feedTab==='30'){if(!dailyNews.length)load60s();else renderNewsCN();return}
   if(feedTab==='40'){renderStatus();return}
-  if(feedTab==='50'){renderHot();return}
   const list=$('#feedList');list.innerHTML='';
   (FEED[feedTab]||[]).forEach(it=>{
     const d=document.createElement('div');d.className='vitem';
