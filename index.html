@@ -139,6 +139,11 @@ html[data-theme=dark] #toast{background:var(--card);color:var(--ink);border:1px 
 
 [hidden]{display:none!important}
 .tool-panel{display:flex;flex-direction:column;gap:10px;min-width:0}
+.mini-sub{border-top:1px solid var(--line);padding-top:9px;margin-top:9px}
+.mini-sub:first-child{border-top:0;padding-top:0;margin-top:0}
+.mini-head{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+.mini-head b{font-size:12.5px;color:var(--ink)}
+.mini-head .tip{font-size:10.5px;color:var(--ink3)}
 .toolrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .toolgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .kv{font-size:12.5px;padding:8px 10px;background:var(--bg2);border-radius:8px;word-break:break-all}
@@ -367,6 +372,7 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
           <button data-t="cipher">加密</button>
           <button data-t="board">拼写板</button>
           <button data-t="count">字数</button>
+          <button data-t="mini">小工具</button>
         </div>
 
         <div class="tool-panel" data-p="color">
@@ -423,6 +429,48 @@ footer.legal{grid-column:1/-1;text-align:center;color:var(--ink3);font-size:12px
         <div class="tool-panel" data-p="count" hidden>
           <textarea id="tCount" class="inp" style="width:100%;min-height:110px" placeholder="把文字粘贴进来…"></textarea>
           <div class="toolgrid" id="tCountInfo"></div>
+        </div>
+
+        <div class="tool-panel" data-p="mini" hidden>
+          <div class="mini-sub">
+            <div class="mini-head"><b>时间戳 ↔ 日期</b><span class="tip">秒/毫秒均识别，留空 = 当前时间</span></div>
+            <div class="toolrow">
+              <input id="mTs" class="inp" style="flex:1;min-width:0" placeholder="时间戳 或 日期（2026-08-24 18:00）…">
+              <button class="btn" data-b="ts2d">戳→日期</button>
+              <button class="btn" data-b="d2ts">日期→戳</button>
+            </div>
+            <div class="trans-big" id="mTsOut" style="min-height:20px">—</div>
+          </div>
+
+          <div class="mini-sub">
+            <div class="mini-head"><b>Base64</b><span class="tip">支持中文，双向</span></div>
+            <div class="toolrow">
+              <input id="mB64" class="inp" style="flex:1;min-width:0" placeholder="要编码/解码的文本…">
+              <button class="btn" data-b="b64e">编码</button>
+              <button class="btn" data-b="b64d">解码</button>
+            </div>
+            <div class="trans-big" id="mB64Out" style="min-height:20px;word-break:break-all">—</div>
+          </div>
+
+          <div class="mini-sub">
+            <div class="mini-head"><b>URL 编解码</b><span class="tip">encodeURIComponent 双向</span></div>
+            <div class="toolrow">
+              <input id="mUrl" class="inp" style="flex:1;min-width:0" placeholder="URL 或片段…">
+              <button class="btn" data-b="urlE">编码</button>
+              <button class="btn" data-b="urlD">解码</button>
+            </div>
+            <div class="trans-big" id="mUrlOut" style="min-height:20px;word-break:break-all">—</div>
+          </div>
+
+          <div class="mini-sub">
+            <div class="mini-head"><b>JSON</b><span class="tip">格式化 / 压缩</span></div>
+            <textarea id="mJson" class="inp" style="width:100%;min-height:70px" placeholder='{"name":"q","list":[1,2]}'></textarea>
+            <div class="toolrow">
+              <button class="btn" data-b="jsonF">格式化</button>
+              <button class="btn" data-b="jsonC">压缩</button>
+              <span id="mJsonOut" class="trans-big" style="font-size:12px;min-width:0;max-height:120px;overflow:auto;word-break:break-all"></span>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1424,7 +1472,34 @@ function renderFeed(){
     else toast('已复制')};
 })();
 
-/* ---------- 随机决策器 ---------- */
+/* ---------- 小工具组（时间戳 / Base64 / URL / JSON，均纯本地） ---------- */
+(()=>{
+  const panel=document.querySelector('.tool-panel[data-p=mini]');if(!panel)return;
+  const val=id=>{const el=document.getElementById(id);return el?el.value.trim():''};
+  const put=(id,text)=>{const el=document.getElementById(id);if(el)el.textContent=text};
+  panel.querySelectorAll('button[data-b]').forEach(b=>b.onclick=()=>{
+    switch(b.dataset.b){
+      case 'ts2d':{
+        const raw=val('mTs');let n=raw?Number(raw.replace(/[,\s]/g,'')):Date.now();
+        if(isNaN(n)||n<=0){put('mTsOut','无法识别，输入数字时间戳或留空 = 当前');break}
+        if(String(Math.floor(n)).length<=10)n*=1000;
+        if(isNaN(new Date(n).getTime())){put('mTsOut','超出可识别范围');break}
+        put('mTsOut',new Date(n).toLocaleString('zh-CN',{hour12:false,timeZone:'Asia/Shanghai'})+'（北京）');break}
+      case 'd2ts':{
+        const d=new Date(val('mTs')||Date.now());
+        if(isNaN(d.getTime())){put('mTsOut','日期格式无法识别，如 2026-08-24 18:00');break}
+        put('mTsOut',d.getTime()+' 毫秒 / '+Math.floor(d.getTime()/1000)+' 秒');break}
+      case 'b64e':try{put('mB64Out',btoa(unescape(encodeURIComponent(val('mB64')))))}catch(e){put('mB64Out','编码失败')}break;
+      case 'b64d':try{put('mB64Out',decodeURIComponent(escape(atob(val('mB64')))))}catch(e){put('mB64Out','不是有效的 Base64')}break;
+      case 'urlE':put('mUrlOut',encodeURIComponent(val('mUrl')));break;
+      case 'urlD':try{put('mUrlOut',decodeURIComponent(val('mUrl')))}catch(e){put('mUrlOut','不是有效的 URL 编码')}break;
+      case 'jsonF':
+      case 'jsonC':{
+        try{const o=JSON.parse(val('mJson')||'null');
+          put('mJsonOut',b.dataset.b==='jsonF'?JSON.stringify(o,null,2):JSON.stringify(o))}
+        catch(e){put('mJsonOut','JSON 格式不对')}break}
+    }});
+})();
 const DECDEF={eat:['米饭配俩菜','面条','火锅','饺子','披萨','螺蛳粉','麻辣烫','自己随便做'],custom:['选项A','选项B','选项C']};
 let decMode='eat';
 function decOpts(){if(decMode==='coin')return['正面','反面'];if(decMode==='dice')return Array.from({length:6},(_,i)=>String(i+1));
