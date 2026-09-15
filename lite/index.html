@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0e0f13">
+<title>轻量工作台</title>
+<meta name="description" content="通用版个人工作台：AI 日报 / 每日新闻 / AI 助手 / 待办 / 速记 / 收藏 / 课程表。纯前端，不依赖任何本机服务。">
+<meta property="og:title" content="轻量工作台">
+<meta property="og:description" content="通用版个人工作台，聚合 AI 日报与每日新闻，含待办/速记/收藏/AI 助手。">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="zh_CN">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="styles.css?v=1">
+</head>
+<body>
+<a class="skip" href="#main">跳到主内容</a>
+<header class="header">
+  <div>
+    <h1>🛠️ 轻量工作台</h1>
+    <div class="sub">通用版 · AI 日报 / 新闻 / 助手 · 数据全来自公开接口</div>
+  </div>
+  <div class="snap-wrap">
+    <span class="clock" id="clock">🕐 --:--:--</span>
+    <button class="refresh-btn" id="themeBtn" onclick="toggleTheme()" title="切换深色 / 浅色">🌙</button>
+  </div>
+</header>
+<main class="container" id="main">
+  <div class="bento">
+  <section class="card todos-card">
+    <h2><span class="ic">✅</span>待办清单 · 可勾选</h2>
+    <div class="todo-prog" id="todoProg"></div>
+    <ul class="todos" id="todosList"></ul>
+    <textarea id="todoInput" rows="2" placeholder="写一条待办，回车或点"添加"（仅存本机，勾上即完成）"></textarea>
+    <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+      <button class="btn-sm" onclick="addTodo()">➕ 添加</button>
+      <button class="btn-sm" onclick="clearDone()">🧹 清除已完成</button>
+      <span id="todosHint" class="empty"></span>
+    </div>
+    <div class="pomo">
+      <div class="pomo-h">🍅 专注计时 · 25 分钟</div>
+      <div class="pomo-row">
+        <span class="pomo-t" id="pomoT">25:00</span>
+        <div class="pomo-bar-wrap"><div class="pomo-bar" id="pomoBar"></div></div>
+        <button class="btn-sm" id="pomoBtn" onclick="pomoToggle()">▶ 开始专注</button>
+        <button class="btn-sm" onclick="pomoReset()">↺ 重置</button>
+        <span id="pomoHint" class="empty"></span>
+      </div>
+    </div>
+  </section>
+  <section class="card notes-card">
+    <h2><span class="ic">📝</span>我的速记 · 随手记</h2>
+    <ul class="notes" id="notesList"></ul>
+    <textarea id="noteInput" rows="3" placeholder="写一条想法 / 灵感 / 待查的事，点"添加"保存（仅存本机）"></textarea>
+    <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+      <button class="btn-sm" onclick="addNote()">➕ 添加</button>
+      <span class="empty" id="notesHint"></span>
+    </div>
+  </section>
+  <section class="card links-card">
+    <h2><span class="ic">🔗</span>常用入口 · 一键直达</h2>
+    <div class="links-grid" id="linksGrid"></div>
+    <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <button class="btn-sm" onclick="addLink()">➕ 加一个</button>
+      <span id="linksHint" class="empty"></span>
+    </div>
+  </section>
+  <section class="card fav-card">
+    <h2><span class="ic">⭐</span>我的收藏 · 稍后读</h2>
+    <ul class="fav-list" id="favsList"></ul>
+    <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+      <button class="btn-sm" onclick="clearFavs()">🗑 清空收藏</button>
+      <span id="favsHint" class="empty"></span>
+    </div>
+  </section>
+  </div>
+  <nav class="tabs">
+    <button class="tab active" data-tab="cap" onclick="switchTab('cap')">🏠 首页</button>
+    <button class="tab" data-tab="ai" onclick="switchTab('ai')">🤖 AI 助手</button>
+    <button class="tab" data-tab="news" onclick="switchTab('news')">🗞️ AI 日报</button>
+    <button class="tab" data-tab="dnews" onclick="switchTab('dnews')">📰 每日新闻</button>
+    <button class="tab" data-tab="schedule" onclick="switchTab('schedule')">📅 课程表</button>
+  </nav>
+  <section class="tabpane active" id="pane-cap">
+    <div class="wrap"><div class="col" id="col-cap">
+      <div class="card"><h2><span class="ic">👋</span>欢迎使用轻量工作台</h2>
+      <div class="empty" style="line-height:1.8">
+        顶部四张卡是<b>本地功能</b>（待办 / 速记 / 常用入口 / 收藏），数据只存你浏览器里。<br><br>
+        切换上方标签页：<br>
+        · 🤖 <b>AI 助手</b>：接 Agnes / 智谱，填一次 Key 就能聊<br>
+        · 🗞️ <b>AI 日报</b>：每天 AI 行业资讯，直连公开接口<br>
+        · 📰 <b>每日新闻</b>：每天国内要闻 60 秒<br>
+        · 📅 <b>课程表</b>：手动加 / 导入 Excel，可备份云端<br><br>
+        新闻条目上的 ☆ 可收藏，☁️ 可让 AI 讲讲，一键跳转 AI 助手。
+      </div></div>
+    </div></div>
+  </section>
+  <section class="tabpane" id="pane-ai">
+    <div class="wrap"><div class="col" id="col-ai"></div></div>
+  </section>
+  <section class="tabpane" id="pane-news">
+    <div class="wrap"><div class="col" id="col-news"></div></div>
+  </section>
+  <section class="tabpane" id="pane-dnews">
+    <div class="wrap"><div class="col" id="col-dnews"></div></div>
+  </section>
+  <section class="tabpane" id="pane-schedule">
+    <div class="wrap"><div class="col" id="col-schedule"></div></div>
+  </section>
+</main>
+<div class="foot">数据来自公开接口（AI HOT / 60s）· 本地功能仅存本机浏览器 · <button class="btn-sm" onclick="exportAll()" title="把待办/速记/收藏/入口导出为 Markdown">📤 导出数据</button></div>
+<script src="schedule.js?v=1"></script>
+<script src="app.js?v=1"></script>
+</body>
+</html>
