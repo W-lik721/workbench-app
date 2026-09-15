@@ -1495,6 +1495,20 @@
       function (e) { clearTimeout(timer); throw e; }
     );
   }
+  // 无 Token / Token 失效时，页面头部那两处别停在「加载中…」——直接给出口（2026-09-15）
+  // 起因：snap / syncStatus 的初值是 index.html 里的占位文本，只有 loadData() 成功
+  // 才会被 renderHeaderStrip() 覆盖；无 Token 时 loadData() 抛错，头部就永远卡在「加载中…」，
+  // 而引导卡在下方 tab 区，小白会误以为页面坏了。
+  function showNeedTokenState(why) {
+    var s = document.getElementById("snap");
+    if (s) s.textContent = "快照 · 需要 Token";
+    var y = document.getElementById("syncStatus");
+    if (!y) return;
+    y.className = "sync-status warn";
+    // 手机端 .sync-status 限宽 46vw + 省略号（styles.css 的移动端媒体查询），
+    // 内嵌按钮会被截成「…」看不到，所以这里只放短文案；引导入口交给下方卡片的按钮
+    y.textContent = why || "🔑 需要 Token";
+  }
   function loadData() {
     return ghFetchJson("data.json", DATA_BRANCH)
       .catch(function (e) {
@@ -1926,12 +1940,22 @@
   loadData().catch(function (e) {
     var m = String((e && e.message) || e);
     if (m === "NONTOKEN") {
+      showNeedTokenState();
       document.getElementById("col-cap").innerHTML =
         '<div class="card"><h2>🔑 需要 GitHub Token</h2><div class="empty">' +
         "网页版已改为「站点公开、数据私有」：页面的静态文件放在公开仓，" +
         "你的 data.json / 课程表仍在私有仓，所以浏览器要带 Token 才读得到。" +
         "<br>Token 只存在你这台设备的浏览器里，不会上传到任何地方；需要 repo + workflow 权限。" +
         '<div style="margin-top:10px"><button class="btn" onclick="setGhToken()">填入 Token</button></div></div></div>';
+      return;
+    }
+    if (m.indexOf("HTTP 401") >= 0 || m.indexOf("HTTP 403") >= 0) {
+      // Token 无效 / 权限不足：重试没用，直接引导重填（2026-09-15）
+      showNeedTokenState("🔑 Token 无效");
+      document.getElementById("col-cap").innerHTML =
+        '<div class="card"><h2>🔑 Token 无效或权限不足</h2><div class="empty">' +
+        "GitHub 返回 " + esc(m) + "。请确认 Token 没过期，且勾选了 repo 权限。" +
+        '<div style="margin-top:10px"><button class="btn" onclick="setGhToken()">重新填入 Token</button></div></div></div>';
       return;
     }
     document.getElementById("col-cap").innerHTML = '<div class="card"><h2>⚠️ 数据加载失败</h2><div class="empty">无法读取 data.json：' + esc(m) + "。10 秒后自动重试。</div></div>";
