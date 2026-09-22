@@ -415,6 +415,10 @@ body.light .cat-b::-webkit-scrollbar-thumb{background:rgba(0,0,0,.16)}
 .sr-main{flex:1;display:flex;flex-direction:column;gap:2px;line-height:1.45}
 .sr-main b{font-size:var(--text-sm)}
 .sr-loc,.sr-teach,.sr-note{font-size:13px;color:var(--sub);margin-right:8px}
+.sr-chips{display:flex;flex-wrap:wrap;gap:4px;margin:2px 0}
+.sr-chip{display:inline-block;font-size:11px;line-height:1.6;padding:0 7px;border-radius:10px;font-weight:600}
+.sr-week{background:rgba(78,201,176,.16);color:var(--accent)}
+.sr-credit{background:rgba(61,139,253,.16);color:#6ea8fe}
 
 /* ---------- 热力图弹窗 / 顶栏按钮 ---------- */
 .heat-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;align-items:center;justify-content:center;padding:20px;animation:fadeIn .25s ease both}
