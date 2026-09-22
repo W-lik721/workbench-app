@@ -384,9 +384,13 @@
         var arr = byDay[d]; if (!arr.length) return;
         body += '<div class="sched-day"><div class="sched-day-h">' + esc(d) + ' <span class="cc">' + arr.length + '</span></div>';
         arr.forEach(function (c) {
+          var chips = "";
+          if (c.weeks) chips += '<span class="sr-chip sr-week">' + esc(c.weeks) + '</span>';
+          if (c.credit) chips += '<span class="sr-chip sr-credit">' + esc(c.credit) + '</span>';
           body += '<div class="sched-row">' +
             '<div class="sr-time">' + esc(c.time || "-") + '</div>' +
             '<div class="sr-main"><b>' + esc(c.name || "未命名") + '</b>' +
+            (chips ? '<div class="sr-chips">' + chips + '</div>' : '') +
             (c.location ? '<span class="sr-loc">' + esc(c.location) + '</span>' : '') +
             (c.teacher ? '<span class="sr-teach">' + esc(c.teacher) + '</span>' : '') +
             (c.note ? '<span class="sr-note">' + esc(c.note) + '</span>' : '') + '</div>' +
