@@ -333,6 +333,44 @@
       if (hint) hint.textContent = "✓ 已导出 JSON";
     }
   }
+  // 渲染前「显示层」清洗：不动数据本身（方案 C）。
+  // 处理 App 源数据常见的脏法：
+  //   · 学分写进 note 而 credit 为空 → 提出来给学分 chip；
+  //   · note 里重复写了学分 → 去掉重复；
+  //   · 周次字段混了「单周/双周/周双」→ 移到 note 去重。
+  function normScheduleCourse(c) {
+    var credit = (c.credit || "").trim();
+    var note = (c.note || "").trim();
+    var weeks = (c.weeks || "").trim();
+
+    // 1) credit 为空但有 "X学分" → 从 note 提出
+    var m = note.match(/(\d+(?:\.\d+)?)\s*学分/);
+    if (!credit && m) {
+      credit = m[1] + "学分";
+      note = note.replace(m[0], " ");
+    }
+    // 2) note 里若仍有学分字样（重复）→ 删掉
+    if (credit) {
+      note = note.replace(/(\d+(?:\.\d+)?)\s*学分/g, " ");
+    }
+
+    // 3) 单双周：weeks 里可能带「单周/双周/周双」，统一成「单周/双周」
+    var parity = "";
+    var pm = weeks.match(/(周双|双周|单周|单双周)/);
+    if (pm) {
+      parity = pm[1] === "周双" ? "双周" : pm[1];
+      weeks = weeks.replace(pm[0], " ");
+    }
+    var noteHasParity = /(单周|双周|单双周)/.test(note);
+    if (parity && !noteHasParity) {
+      note = (note ? parity + " " + note : parity);
+    }
+
+    note = note.replace(/\s+/g, " ").trim();
+    weeks = weeks.replace(/\s+/g, " ").trim();
+    return { weeks: weeks, credit: credit, note: note };
+  }
+
   function renderSchedule() {
     var box = document.getElementById("col-schedule");
     if (!box) return;
@@ -384,16 +422,17 @@
         var arr = byDay[d]; if (!arr.length) return;
         body += '<div class="sched-day"><div class="sched-day-h">' + esc(d) + ' <span class="cc">' + arr.length + '</span></div>';
         arr.forEach(function (c) {
+          var n = normScheduleCourse(c);
           var chips = "";
-          if (c.weeks) chips += '<span class="sr-chip sr-week">' + esc(c.weeks) + '</span>';
-          if (c.credit) chips += '<span class="sr-chip sr-credit">' + esc(c.credit) + '</span>';
+          if (n.weeks) chips += '<span class="sr-chip sr-week">' + esc(n.weeks) + '</span>';
+          if (n.credit) chips += '<span class="sr-chip sr-credit">' + esc(n.credit) + '</span>';
           body += '<div class="sched-row">' +
             '<div class="sr-time">' + esc(c.time || "-") + '</div>' +
             '<div class="sr-main"><b>' + esc(c.name || "未命名") + '</b>' +
             (chips ? '<div class="sr-chips">' + chips + '</div>' : '') +
             (c.location ? '<span class="sr-loc">' + esc(c.location) + '</span>' : '') +
             (c.teacher ? '<span class="sr-teach">' + esc(c.teacher) + '</span>' : '') +
-            (c.note ? '<span class="sr-note">' + esc(c.note) + '</span>' : '') + '</div>' +
+            (n.note ? '<span class="sr-note">' + esc(n.note) + '</span>' : '') + '</div>' +
             '<button class="nd" onclick="delCourse(' + c.__i + ')">✕</button>' +
             '</div>';
         });
