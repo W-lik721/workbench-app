@@ -843,3 +843,59 @@ body.light .wb-dlg .wb-dlg-in{background:var(--input-bg)}
 
 /* ---------- 离线提示条 ---------- */
 .offline-bar{text-align:center;background:var(--amber-soft);color:var(--amber);border-bottom:1px solid var(--amber-line);font-size:var(--text-sm);padding:7px 12px;font-weight:600;animation:fadeIn .3s ease both}
+
+/* ---------- 网格课表（对齐 App schedule_page.dart） ---------- */
+.sched-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0;padding:10px 12px;background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm)}
+.st-group{display:flex;align-items:center;gap:6px}
+.st-group.grow{flex:1;min-width:180px}
+.st-label{font-size:12px;color:var(--sub);font-weight:600;white-space:nowrap}
+.st-btn{background:var(--panel);border:1px solid var(--line);color:var(--ink);padding:5px 11px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-weight:600;transition:border-color .15s,background .15s,transform .15s;white-space:nowrap}
+.st-btn:hover{border-color:var(--accent);background:var(--tint);transform:translateY(-1px)}
+.st-btn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.st-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.st-week{font-size:13px;font-weight:700;color:var(--ink);min-width:118px;text-align:center;padding:0 6px}
+.st-week.auto{color:var(--sub)}
+.sched-banner{display:flex;align-items:center;gap:8px;margin:0 0 12px;padding:9px 12px;background:var(--line-soft);border:1px solid var(--line);border-radius:var(--radius);font-size:13px;font-weight:600;color:var(--ink)}
+.sched-banner::before{content:"📅";font-size:14px}
+.sched-grid{display:flex;gap:0;overflow-x:auto;padding-bottom:8px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow-sm)}
+.sched-period-col{flex:0 0 64px;width:64px}
+.sched-day-col{flex:0 0 130px;width:130px;border-left:1px solid var(--line)}
+.sph,.sdh{height:40px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--ink);border-bottom:1px solid var(--line);background:var(--line-soft)}
+.sdh{position:sticky;top:0;z-index:1}
+.spc{height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+.spc-l{font-size:18px;font-weight:700;color:var(--ink)}
+.spc-t{font-size:11px;color:var(--sub);font-variant-numeric:tabular-nums}
+.spc-tag{font-size:9px;color:var(--sub);background:var(--panel-2);border-radius:3px;padding:0 4px}
+.spc.now{background:var(--tint);border-left:4px solid var(--accent)}
+.spc.now .spc-l{color:var(--accent)}
+.sdc{position:relative}
+.sg{position:absolute;left:0;right:0;border-bottom:1px solid var(--line);border-right:1px solid var(--line);pointer-events:none}
+.sg-add{position:absolute;left:0;right:0;display:flex;align-items:center;justify-content:center;color:var(--sub-2);font-size:20px;cursor:pointer;border-bottom:1px solid var(--line);border-right:1px solid var(--line);transition:.15s}
+.sg-add:hover{background:var(--tint);color:var(--accent)}
+.sched-day-col.is-today .sdh{background:var(--tint);color:var(--accent);border-top:3px solid var(--accent)}
+.sc-stack{position:absolute;left:0;right:0;display:flex;flex-direction:column;padding:2px}
+.sc-card{position:relative;flex:1;min-height:0;margin:2px;padding:4px 6px;border:1px solid;border-radius:6px;overflow:hidden;cursor:pointer;transition:border-color .15s,background .15s,filter .15s}
+.sc-card:hover{filter:brightness(1.1)}
+.sc-card.hit{border-width:2.5px}
+.scc-name{font-size:12px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scc-time{font-size:10px;color:var(--sub);font-variant-numeric:tabular-nums}
+.scc-sub{font-size:10px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scc-week{display:inline-block;font-size:9px;color:var(--sub);background:var(--panel-2);border-radius:4px;padding:0 5px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.scc-credit{font-size:10px;font-weight:700;color:var(--accent);margin-top:2px}
+.scc-note{font-size:10px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scc-del{position:absolute;top:2px;right:2px;width:16px;height:16px;line-height:14px;text-align:center;border:none;background:transparent;color:var(--sub);font-size:11px;cursor:pointer;border-radius:4px;opacity:0;transition:.15s}
+.sc-card:hover .scc-del{opacity:1}
+.scc-del:hover{background:rgba(255,90,90,.22);color:#ff6b6b}
+.sched-hidden{margin:12px 0 0;padding:10px 12px;border-radius:var(--radius);font-size:13px;background:var(--line-soft);border:1px solid var(--line);color:var(--sub);display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.sched-unplaced{margin:12px 0 0;padding:10px 12px;border-radius:var(--radius);font-size:13px;background:rgba(255,160,80,.12);border:1px solid rgba(255,160,80,.4);color:var(--ink)}
+.sched-unplaced .su-title{font-weight:700;margin-bottom:6px}
+.sched-unplaced .su-item{display:flex;align-items:center;gap:8px;padding:4px 0;cursor:pointer;border-top:1px solid var(--line-soft);font-size:13px}
+.sched-unplaced .su-item:hover{color:var(--accent)}
+.sched-unplaced .su-x{margin-left:auto;color:var(--sub)}
+/* 编辑弹窗 */
+.sched-edit-mask{display:none;position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:20px}
+.sched-edit{width:min(440px,94vw);background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow-lg);animation:dlgIn .22s var(--ease) both}
+.se-h{font-size:15px;font-weight:700;color:var(--accent-2);margin-bottom:12px}
+.se-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.se-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+@media(max-width:680px){.sched-day-col{flex:0 0 108px;width:108px}.st-week{min-width:90px}.se-grid{grid-template-columns:1fr}}
