@@ -1,47 +1,70 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0e0f13">
-<title>轻量工作台</title>
-<meta name="description" content="通用版个人工作台：AI 日报 / 每日新闻 / AI 助手 / 待办 / 速记 / 收藏 / 课程表。纯前端，不依赖任何本机服务。">
-<meta property="og:title" content="轻量工作台">
-<meta property="og:description" content="通用版个人工作台，聚合 AI 日报与每日新闻，含待办/速记/收藏/AI 助手。">
+<title>个人工作台</title>
+<meta name="description" content="WorkBuddy 双端个人操作面板：实时同步本机 skills / 模型 / 自动化 / 知识库真实数据，聚合 AI 日报与每日新闻，含速记、课程表与功能自检。">
+<meta property="og:title" content="个人工作台">
+<meta property="og:description" content="WorkBuddy 双端面板，自动同步本机真实数据，聚合 AI 日报与每日新闻。">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="zh_CN">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="styles.css?v=1">
+<link rel="stylesheet" href="styles.css?v=67">
 </head>
 <body>
 <a class="skip" href="#main">跳到主内容</a>
 <header class="header">
   <div>
-    <h1>🛠️ 轻量工作台</h1>
-    <div class="sub">通用版 · AI 日报 / 新闻 / 助手 · 数据全来自公开接口</div>
+    <h1>个人工作台</h1>
+    <div class="sub">WorkBuddy 双端面板 · 自动同步本机真实数据</div>
   </div>
   <div class="snap-wrap">
     <span class="clock" id="clock">🕐 --:--:--</span>
-    <button class="refresh-btn" id="themeBtn" onclick="toggleTheme()" title="切换深色 / 浅色">🌙</button>
+    <button class="refresh-btn" id="todayBtn" onclick="copyToday()" title="把今天的 KPI / 头条 / 引导整理成一段文字复制，发给 AI 要今日建议"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> 今日概览</button>
+    <div class="snap" id="snap">快照 · 加载中…</div>
+    <div class="sync-status" id="syncStatus">同步状态 · 加载中…</div>
+    <button class="refresh-btn" id="refreshBtn" onclick="refreshData()" title="触发云端同步：让 GitHub Actions 拉取本机最新数据并重新部署网页。需先在网页设置里填好 Token；只同步数据，不清除本地内容"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> 同步数据</button>
+    <button class="refresh-btn" id="installBtn" onclick="promptInstall()" style="display:none" title="把工作台安装成 App（可离线、像原生应用一样打开）"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 安装 App</button>
+    <button class="refresh-btn" id="themeBtn" onclick="toggleTheme()" title="切换主题（深色 / 浅色 / 跟随系统）"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
   </div>
 </header>
+<div class="selfcheck" id="selfCheckResult"></div>
 <main class="container" id="main">
+  <section class="kpis" id="kpis"></section>
+  <div class="searchbar">
+  <span class="si"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+  <input id="q" placeholder="搜 skill 名称 / 描述，快速定位…" oninput="filt()">
+</div>
+  <section class="quickbar">
+    <div class="qb-title"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> 快捷启动台</div>
+    <div class="qb-grid" id="quickbar"></div>
+  </section>
+  <section class="overview" id="overview"></section>
   <div class="bento">
   <section class="card todos-card">
-    <h2><span class="ic">✅</span>待办清单 · 可勾选</h2>
+    <h2><span class="ic"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>待办清单 · 可勾选</h2>
     <div class="todo-prog" id="todoProg"></div>
     <ul class="todos" id="todosList"></ul>
-    <textarea id="todoInput" rows="2" placeholder="写一条待办，回车或点"添加"（仅存本机，勾上即完成）"></textarea>
+    <textarea id="todoInput" rows="2" placeholder="写一条待办，回车或点“添加”（仅存本机，勾上即完成）"></textarea>
     <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
       <button class="btn-sm" onclick="addTodo()">➕ 添加</button>
-      <button class="btn-sm" onclick="clearDone()">🧹 清除已完成</button>
+      <button class="btn-sm" onclick="clearDone()">清除已完成</button>
       <span id="todosHint" class="empty"></span>
     </div>
     <div class="pomo">
-      <div class="pomo-h">🍅 专注计时 · 25 分钟</div>
+      <div class="pomo-h">专注计时 ·
+        <select id="pomoLen" class="pomo-sel" onchange="pomoSetLen(this.value)" title="选择专注时长">
+          <option value="5">5 分钟</option>
+          <option value="15">15 分钟</option>
+          <option value="25" selected>25 分钟</option>
+          <option value="45">45 分钟</option>
+        </select>
+      </div>
       <div class="pomo-row">
         <span class="pomo-t" id="pomoT">25:00</span>
         <div class="pomo-bar-wrap"><div class="pomo-bar" id="pomoBar"></div></div>
@@ -52,67 +75,83 @@
     </div>
   </section>
   <section class="card notes-card">
-    <h2><span class="ic">📝</span>我的速记 · 随手记</h2>
-    <ul class="notes" id="notesList"></ul>
-    <textarea id="noteInput" rows="3" placeholder="写一条想法 / 灵感 / 待查的事，点"添加"保存（仅存本机）"></textarea>
+    <h2><span class="ic"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg></span>我的速记 · 仅存本机</h2>
+    <textarea id="noteInput" rows="2" placeholder="记一笔待办 / 想法，回车或点“添加”（只存在你浏览器，不上传）"></textarea>
     <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
       <button class="btn-sm" onclick="addNote()">➕ 添加</button>
-      <span class="empty" id="notesHint"></span>
+      <span id="notesHint" class="empty"></span>
+    </div>
+    <ul class="notes" id="notesList"></ul>
+  </section>
+  <section class="card ov-card">
+    <h2><span class="ic"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg></span>今日概览 · 本机小数据</h2>
+    <div class="ov-res" id="ovStats"></div>
+    <button class="mini-btn" onclick="inspireToday()">生成今日建议</button>
+  </section>
+  <section class="card fav-card">
+    <h2><span class="ic"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>我的收藏 · 稍后读</h2>
+    <ul class="fav-list" id="favList"></ul>
+    <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+      <button class="btn-sm" onclick="clearFavs()">清空收藏</button>
+      <span id="favsHint" class="empty"></span>
     </div>
   </section>
   <section class="card links-card">
-    <h2><span class="ic">🔗</span>常用入口 · 一键直达</h2>
+    <h2><span class="ic"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>常用入口</h2>
     <div class="links-grid" id="linksGrid"></div>
     <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <button class="btn-sm" onclick="addLink()">➕ 加一个</button>
       <span id="linksHint" class="empty"></span>
     </div>
   </section>
-  <section class="card fav-card">
-    <h2><span class="ic">⭐</span>我的收藏 · 稍后读</h2>
-    <ul class="fav-list" id="favsList"></ul>
-    <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
-      <button class="btn-sm" onclick="clearFavs()">🗑 清空收藏</button>
-      <span id="favsHint" class="empty"></span>
-    </div>
+  <section class="card wk-card">
+    <h2><span class="ic"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>本周动态 · 近期变化</h2>
+    <ul class="wk-list" id="wkList"></ul>
   </section>
   </div>
   <nav class="tabs">
-    <button class="tab active" data-tab="cap" onclick="switchTab('cap')">🏠 首页</button>
-    <button class="tab" data-tab="ai" onclick="switchTab('ai')">🤖 AI 助手</button>
-    <button class="tab" data-tab="news" onclick="switchTab('news')">🗞️ AI 日报</button>
-    <button class="tab" data-tab="dnews" onclick="switchTab('dnews')">📰 每日新闻</button>
-    <button class="tab" data-tab="schedule" onclick="switchTab('schedule')">📅 课程表</button>
+    <button class="tab active" data-tab="cap" onclick="switchTab('cap')"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> 能力速达</button>
+    <button class="tab" data-tab="ai" onclick="switchTab('ai')"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> AI 助手</button>
+    <button class="tab" data-tab="info" onclick="switchTab('info')"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> 资讯<span class="tab-dot" id="infoDot"></span></button>
+    <button class="tab" data-tab="ov" onclick="switchTab('ov')"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> 系统状态</button>
+    <button class="tab" data-tab="stats" onclick="switchTab('stats')"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Skill 统计</button>
+    <button class="tab" data-tab="sess" onclick="switchTab('sess')"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 会话档案</button>
+    <button class="tab" data-tab="week" onclick="switchTab('week')"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> 本周动态</button>
+    <button class="tab" data-tab="schedule" onclick="switchTab('schedule')"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 课程表</button>
   </nav>
   <section class="tabpane active" id="pane-cap">
-    <div class="wrap"><div class="col" id="col-cap">
-      <div class="card"><h2><span class="ic">👋</span>欢迎使用轻量工作台</h2>
-      <div class="empty" style="line-height:1.8">
-        顶部四张卡是<b>本地功能</b>（待办 / 速记 / 常用入口 / 收藏），数据只存你浏览器里。<br><br>
-        切换上方标签页：<br>
-        · 🤖 <b>AI 助手</b>：接 Agnes / 智谱，填一次 Key 就能聊<br>
-        · 🗞️ <b>AI 日报</b>：每天 AI 行业资讯，直连公开接口<br>
-        · 📰 <b>每日新闻</b>：每天国内要闻 60 秒<br>
-        · 📅 <b>课程表</b>：手动加 / 导入 Excel，可备份云端<br><br>
-        新闻条目上的 ☆ 可收藏，☁️ 可让 AI 讲讲，一键跳转 AI 助手。
-      </div></div>
-    </div></div>
+    <div class="wrap"><div class="col" id="col-cap"></div><aside class="col" id="side-cap"></aside></div>
   </section>
   <section class="tabpane" id="pane-ai">
     <div class="wrap"><div class="col" id="col-ai"></div></div>
   </section>
-  <section class="tabpane" id="pane-news">
-    <div class="wrap"><div class="col" id="col-news"></div></div>
+  <section class="tabpane" id="pane-info">
+    <div class="wrap"><div class="col" id="col-info"><div id="newsBlock"></div><div id="dnewsBlock"></div></div></div>
   </section>
-  <section class="tabpane" id="pane-dnews">
-    <div class="wrap"><div class="col" id="col-dnews"></div></div>
+  <section class="tabpane" id="pane-ov">
+    <div class="wrap"><div class="col" id="col-ov"></div></div>
+  </section>
+  <section class="tabpane" id="pane-stats">
+    <div class="wrap"><div class="col" id="col-stats"></div></div>
+  </section>
+  <section class="tabpane" id="pane-sess">
+    <div class="wrap"><div class="col" id="col-sess"></div></div>
+  </section>
+  <section class="tabpane" id="pane-week">
+    <div class="wrap"><div class="col" id="col-week"></div></div>
   </section>
   <section class="tabpane" id="pane-schedule">
     <div class="wrap"><div class="col" id="col-schedule"></div></div>
   </section>
 </main>
-<div class="foot">数据来自公开接口（AI HOT / 60s）· 本地功能仅存本机浏览器 · <button class="btn-sm" onclick="exportAll()" title="把待办/速记/收藏/入口导出为 Markdown">📤 导出数据</button></div>
-<script src="schedule.js?v=1"></script>
-<script src="app.js?v=1"></script>
+<div class="foot">本机数据每小时自动同步 · AI 日报与每日新闻自动抓取 · 全部用真实数据动态生成 · <span id="freshness"></span><button class="btn-sm" id="selfCheckBtn" onclick="selfCheck()" title="跑一遍功能自检，列出各模块是否正常">🔍 功能自检</button><button class="btn-sm" onclick="exportAll()" title="把速记/待办/收藏/入口导出为 Markdown">导出数据</button><button class="btn-sm" onclick="backupExport()" title="导出 JSON 备份（可完整恢复）">备份</button><button class="btn-sm" onclick="backupImport()" title="从 JSON 备份恢复数据">恢复</button></div>
+<div class="heat-modal" id="heat-detail" onclick="if(event.target===this)closeHeat()">
+  <div class="heat-card">
+    <div class="heat-card-h"><span id="heat-detail-date"></span><button class="heat-x" onclick="closeHeat()">✕</button></div>
+    <div class="heat-card-b" id="heat-detail-body"></div>
+  </div>
+</div>
+<script src="schedule.js?v=6"></script>
+<script src="app.js?v=73"></script>
 </body>
 </html>
