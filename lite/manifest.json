@@ -1,7 +1,7 @@
 {
-  "name": "轻量工作台",
-  "short_name": "轻量工作台",
-  "description": "通用版个人工作台：AI 日报 / 每日新闻 / AI 助手 / 待办 / 速记 / 收藏 / 课程表。纯前端，不依赖任何本机服务。",
+  "name": "个人工作台",
+  "short_name": "工作台",
+  "description": "个人能力速达与状态看板（双端 PWA）",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
