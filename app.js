@@ -122,6 +122,79 @@
     };
   })();
   WB.jsStr = jsStr;
+  // ---------- 统一非阻塞轻提示（替代零散 hint / 阻塞弹窗，风格统一） ----------
+  // 用法：WB.toast("已保存");  WB.toast("同步失败", { type: "error", sticky: true });
+  // type: success | info | warn | error；sticky=true 时 6s 且带关闭按钮，否则 2.6s 自动消失
+  WB.toast = function (msg, opts) {
+    opts = opts || {};
+    var type = opts.type || "info";
+    var sticky = !!opts.sticky;
+    var ms = opts.ms || (sticky ? 6000 : 2600);
+    var host = document.getElementById("wb-toast-host");
+    if (!host) {
+      host = document.createElement("div");
+      host.id = "wb-toast-host";
+      host.className = "wb-toast-host";
+      document.body.appendChild(host);
+    }
+    var el = document.createElement("div");
+    el.className = "wb-toast wb-toast-" + type;
+    var span = document.createElement("span");
+    span.textContent = msg;
+    el.appendChild(span);
+    if (sticky) {
+      var x = document.createElement("button");
+      x.className = "wb-toast-x";
+      x.setAttribute("aria-label", "关闭");
+      x.textContent = "×";
+      x.onclick = remove;
+      el.appendChild(x);
+    }
+    host.appendChild(el);
+    requestAnimationFrame(function () { el.classList.add("show"); });
+    var timer = setTimeout(remove, ms);
+    function remove() {
+      clearTimeout(timer);
+      el.classList.remove("show");
+      setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 250);
+    }
+    return { close: remove };
+  };
+
+  // ---------- 统一本地存储封装（JSON 自动序列化/解析 + 异常兜底 + 键集中） ----------
+  // 所有 localStorage 键在此集中声明，避免散落字符串拼写漂移、便于统一治理
+  var KEYS = {
+    TAB: "wb_tab",
+    NOTES: "wb_notes",
+    FAVS: "wb_favs",
+    THEME: "wb_theme",
+    TODOS: "wb_todos",
+    AI_PROV: "wb_ai_prov",
+    AI_KEY_AGNES: "wb_ai_key_agnes",
+    AI_KEY_GLM: "wb_ai_key_glm",
+    AI_HIST: "wb_ai_history",
+    AI_MEM: "wb_ai_memory",
+    DATA_CACHE: "wb_data_cache",
+    LINKS: "wb_links"
+  };
+  // 读：字符串类键（主题 / provider / key）原样返回；其余 JSON.parse。缺失或解析损坏一律返回 defaultVal
+  WB.store = function (key, defaultVal) {
+    try {
+      var raw = localStorage.getItem(key);
+      if (raw === null) return defaultVal;
+      if (typeof defaultVal === "string") return raw;
+      var v = JSON.parse(raw);
+      if (Array.isArray(defaultVal) && !Array.isArray(v)) return defaultVal;
+      return v;
+    } catch (e) { return defaultVal; }
+  };
+  // 写：字符串原样存，其余 JSON.stringify；统一 try/catch 兜底（隐私模式 / 配额满不崩）
+  WB.storeSet = function (key, val) {
+    try { localStorage.setItem(key, (typeof val === "string") ? val : JSON.stringify(val)); } catch (e) {}
+  };
+  WB.storeDel = function (key) {
+    try { localStorage.removeItem(key); } catch (e) {}
+  };
 
   // ---------- 复制指令（降级 + 按钮即时反馈） ----------
   function flashCopied(btn, ok) {
@@ -179,9 +252,16 @@
   window.robustCopy = robustCopy;
 
   // ---------- 交互 ----------
+  var __filtT = null;
   function filt() {
-    var q = document.getElementById("q").value.toLowerCase();
-    if (q !== "") switchTab("cap");
+    // 切到能力 Tab 即时响应（便宜）；列表过滤防抖，避免每次按键全量遍历 #skills
+    var qEl = document.getElementById("q");
+    if (qEl && qEl.value !== "") switchTab("cap");
+    if (__filtT) clearTimeout(__filtT);
+    __filtT = setTimeout(filtRun, 180);
+  }
+  function filtRun() {
+    var q = (document.getElementById("q") ? document.getElementById("q").value : "").toLowerCase();
     var any = false;
     document.querySelectorAll("#skills .cat").forEach(function (cat) {
       var n = 0;
@@ -207,7 +287,7 @@
     document.querySelectorAll(".tabpane").forEach(function (p) {
       p.classList.toggle("active", p.id === "pane-" + id);
     });
-    try { localStorage.setItem("wb_tab", id); } catch (e) {}
+    WB.storeSet(KEYS.TAB, id);
     if (__data) renderActiveTab(__data);
   }
   function goKPI(tab, cardId) {
@@ -233,10 +313,8 @@
   function closeHeat() { document.getElementById("heat-detail").style.display = "none"; }
 
   // ---------- 我的速记（localStorage，纯前端） ----------
-  function notesLoad() {
-    try { return JSON.parse(localStorage.getItem("wb_notes") || "[]"); } catch (e) { return []; }
-  }
-  function notesSave(list) { try { localStorage.setItem("wb_notes", JSON.stringify(list)); } catch (e) {} }
+  function notesLoad() { return WB.store(KEYS.NOTES, []); }
+  function notesSave(list) { WB.storeSet(KEYS.NOTES, list); }
   // ---------- 通用删除撤销（底部 toast，4 秒可撤销） ----------
   function undoSnack(msg, undoFn) {
     var old = document.querySelector(".undo-toast"); if (old && old.parentNode) old.parentNode.removeChild(old);
@@ -306,9 +384,9 @@
   }
 
   // ---------- 我的收藏 / 稍后读（localStorage 纯前端） ----------
-  var FAV_KEY = "wb_favs";
-  function favsLoad() { try { return JSON.parse(localStorage.getItem(FAV_KEY) || "[]"); } catch (e) { return []; } }
-  function favsSave(list) { try { localStorage.setItem(FAV_KEY, JSON.stringify(list)); } catch (e) {} }
+  var FAV_KEY = KEYS.FAVS;
+  function favsLoad() { return WB.store(FAV_KEY, []); }
+  function favsSave(list) { WB.storeSet(FAV_KEY, list); }
   function isFav(url) { return favsLoad().some(function (f) { return f.url === url; }); }
   function favToggle(btn, title, url, source) {
     var list = favsLoad();
@@ -367,7 +445,7 @@
   }
   // 读取主题模式：light / dark / system（旧版本只有 dark/light，缺省按 dark）
   function _themeMode() {
-    var v = localStorage.getItem("wb_theme");
+    var v = WB.store(KEYS.THEME, "dark");
     return (v === "light" || v === "dark" || v === "system") ? v : "dark";
   }
   // 算出当前是否浅色：system 模式跟随系统配色偏好
@@ -391,7 +469,7 @@
     // 循环：深色 → 浅色 → 跟随系统 → 深色
     var cur = _themeMode();
     var next = cur === "dark" ? "light" : (cur === "light" ? "system" : "dark");
-    localStorage.setItem("wb_theme", next);
+    WB.storeSet(KEYS.THEME, next);
     applyTheme();
   }
   // 跟随系统模式下，系统主题变化实时响应
@@ -450,11 +528,9 @@
   window.toggleNS = toggleNS; window.newsDateChanged = newsDateChanged;
 
   // ---------- 待办清单（可勾选，localStorage 纯前端） ----------
-  var TODO_KEY = "wb_todos";
-  function todosLoad() {
-    try { return JSON.parse(localStorage.getItem(TODO_KEY) || "[]"); } catch (e) { return []; }
-  }
-  function todosSave(list) { try { localStorage.setItem(TODO_KEY, JSON.stringify(list)); } catch (e) {} }
+  var TODO_KEY = KEYS.TODOS;
+  function todosLoad() { return WB.store(TODO_KEY, []); }
+  function todosSave(list) { WB.storeSet(TODO_KEY, list); }
   function renderTodos() {
     var ul = document.getElementById("todosList");
     if (!ul) return;
@@ -1121,36 +1197,26 @@
 
   // ---------- AI 助手（Agnes / 智谱 GLM 双可选，浏览器直连，Key 存本机） ----------
   var AI_PROVIDERS = {
-    agnes: { label: "Agnes 2.5 Flash", url: "https://apihub.agnes-ai.cn/v1/chat/completions", model: "agnes-2.5-flash", keyKey: "wb_ai_key_agnes" },
-    glm: { label: "智谱 GLM Flash", url: "https://open.bigmodel.cn/api/paas/v4/chat/completions", model: "glm-4-flash", keyKey: "wb_ai_key_glm" }
+    agnes: { label: "Agnes 2.5 Flash", url: "https://apihub.agnes-ai.cn/v1/chat/completions", model: "agnes-2.5-flash", keyKey: KEYS.AI_KEY_AGNES },
+    glm: { label: "智谱 GLM Flash", url: "https://open.bigmodel.cn/api/paas/v4/chat/completions", model: "glm-4-flash", keyKey: KEYS.AI_KEY_GLM }
   };
-  var aiProv = localStorage.getItem("wb_ai_prov") === "glm" ? "glm" : "agnes";
+  var aiProv = WB.store(KEYS.AI_PROV, "agnes") === "glm" ? "glm" : "agnes";
   var aiMsgs = [];   // 会话内消息历史
   var aiBusy = false;
-  function aiKeyLoad() { try { return localStorage.getItem(AI_PROVIDERS[aiProv].keyKey) || ""; } catch (e) { return ""; } }
-  function aiKeySave(k) { try { localStorage.setItem(AI_PROVIDERS[aiProv].keyKey, k); } catch (e) {} }
+  function aiKeyLoad() { return WB.store(AI_PROVIDERS[aiProv].keyKey, ""); }
+  function aiKeySave(k) { WB.storeSet(AI_PROVIDERS[aiProv].keyKey, k); }
   // 记忆：会话历史（刷新/重开不丢）长期记忆库（跨会话注入系统提示词）
-  var AI_HIST_KEY = "wb_ai_history";
-  var AI_MEM_KEY = "wb_ai_memory";
-  function aiHistLoad() {
-    try { var a = JSON.parse(localStorage.getItem(AI_HIST_KEY) || "[]"); return Array.isArray(a) ? a : []; }
-    catch (e) { return []; }
-  }
-  function aiHistSave() {
-    try { localStorage.setItem(AI_HIST_KEY, JSON.stringify(aiMsgs.slice(-50))); } catch (e) {}
-  }
-  function aiMemLoad() {
-    try { var a = JSON.parse(localStorage.getItem(AI_MEM_KEY) || "[]"); return Array.isArray(a) ? a : []; }
-    catch (e) { return []; }
-  }
-  function aiMemSave(arr) {
-    try { localStorage.setItem(AI_MEM_KEY, JSON.stringify(arr)); } catch (e) {}
-  }
+  var AI_HIST_KEY = KEYS.AI_HIST;
+  var AI_MEM_KEY = KEYS.AI_MEM;
+  function aiHistLoad() { return WB.store(AI_HIST_KEY, []); }
+  function aiHistSave() { WB.storeSet(AI_HIST_KEY, aiMsgs.slice(-50)); }
+  function aiMemLoad() { return WB.store(AI_MEM_KEY, []); }
+  function aiMemSave(arr) { WB.storeSet(AI_MEM_KEY, arr); }
   function aiMemHtml() {
     var mem = aiMemLoad();
     if (!mem.length) return '<li class="empty">还没有记忆。记一笔，AI 以后跨会话都记得。</li>';
     return mem.map(function (m) {
-      return '<li><span class="ai-mem-t">' + esc(m.text) + '</span><button class="ai-mem-x" title="删除" onclick="aiMemoryDel(' + m.ts + ')">✕</button></li>';
+      return '<li><span class="ai-mem-t">' + esc(m.text) + '</span><button class="ai-mem-x" title="删除" data-act="delMem" data-ts="' + m.ts + '">✕</button></li>';
     }).join("");
   }
   function aiSysPrompt() {
@@ -1164,7 +1230,7 @@
   }
   function aiSetProv(p) {
     aiProv = AI_PROVIDERS[p] ? p : "agnes";
-    try { localStorage.setItem("wb_ai_prov", aiProv); } catch (e) {}
+    WB.storeSet(KEYS.AI_PROV, aiProv);
     if (__data) renderAI(__data);
   }
   function renderAI(d) {
@@ -1272,7 +1338,7 @@
   function aiClear() {
     WB.dialog.confirm("清空当前对话？记忆库和长期记忆不受影响。", function () {
       aiMsgs = [];
-      try { localStorage.removeItem(AI_HIST_KEY); } catch (e) {}
+      WB.storeDel(AI_HIST_KEY);
       var chat = document.getElementById("aiChat");
       if (chat) chat.innerHTML = '<div class="empty">对话已清空。输入问题，AI 会用大白话回答…</div>';
     });
@@ -1323,7 +1389,7 @@
         if (chat && chat.lastChild) chat.removeChild(chat.lastChild);
         aiAppend("bot", "⚠️ " + err.message);
       })
-      .then(function () { aiBusy = false; });
+      .then(function () { aiBusy = false; flushDeferredReload(); });
   }
   function aiMemoryAdd() {
     var inp = document.getElementById("aiMemInput");
@@ -1334,18 +1400,21 @@
     mem.push({ ts: Date.now(), text: t });
     aiMemSave(mem);
     inp.value = "";
-    if (__data) renderAI(__data);
+    if (__deferReload) flushDeferredReload();          // 有后台新数据先补刷（含刷新记忆列表）
+    else if (__data) renderAI(__data);
     else { var ul = document.getElementById("aiMemList"); if (ul) ul.innerHTML = aiMemHtml(); }
   }
   function aiMemoryDel(ts) {
     var mem = aiMemLoad().filter(function (m) { return m.ts !== ts; });
     aiMemSave(mem);
-    if (__data) renderAI(__data);
+    if (__deferReload) flushDeferredReload();
+    else if (__data) renderAI(__data);
   }
   function aiMemoryClear() {
     WB.dialog.confirm("清空全部长期记忆？此操作不可恢复，对话不受影响。", function () {
       aiMemSave([]);
-      if (__data) renderAI(__data);
+      if (__deferReload) flushDeferredReload();
+      else if (__data) renderAI(__data);
     });
   }
   window.aiSaveKey = aiSaveKey; window.aiSend = aiSend; window.aiSetProv = aiSetProv; window.aiAsk = aiAsk; window.aiClear = aiClear; window.aiMemoryAdd = aiMemoryAdd; window.aiMemoryDel = aiMemoryDel; window.aiMemoryClear = aiMemoryClear;
@@ -1401,10 +1470,15 @@
     d.knowledge.files = Array.isArray(d.knowledge.files) ? d.knowledge.files : [];
     return d;
   }
+  var __lastRenderSig = "";
   function render(d) {
     try {
       d = normalizeData(d);
       __data = d;
+      var sig = d.generatedAt || "";
+      // 渲染签名缓存：同一份快照（generatedAt 相同）时跳过整轮重渲染，省 CPU/DOM
+      if (sig && sig === __lastRenderSig) return;
+      __lastRenderSig = sig;
       renderHeaderStrip(d);
       renderActiveTab(d);
     } catch (err) {
@@ -1473,15 +1547,11 @@
   // auto-sync 是 sync.py / daily_ai.py 每小时推送的分支（最新），main 作兜底。
   var DATA_BRANCH = "auto-sync";
   var DATA_BRANCH_FB = "main";
-  var DATA_CACHE_KEY = "wb_data_cache";
-  function saveDataCache(d) {
-    try { localStorage.setItem(DATA_CACHE_KEY, JSON.stringify({ t: Date.now(), d: d })); } catch (e) {}
-  }
+  var DATA_CACHE_KEY = KEYS.DATA_CACHE;
+  function saveDataCache(d) { WB.storeSet(DATA_CACHE_KEY, { t: Date.now(), d: d }); }
   function loadDataCache() {
-    try {
-      var o = JSON.parse(localStorage.getItem(DATA_CACHE_KEY) || "null");
-      return (o && o.d) ? o.d : null;
-    } catch (e) { return null; }
+    var o = WB.store(DATA_CACHE_KEY, null);
+    return (o && o.d) ? o.d : null;
   }
   // 带超时的 fetch：防止网络挂起导致页面一直"加载中"像冻住
   function fetchT(url, opts, ms) {
@@ -1533,6 +1603,30 @@
         throw e;
       });
   }
+  // ---------- 后台刷新守卫（P0：防止后台刷新抹掉未发送草稿）----------
+  function activeTabId() {
+    var a = document.querySelector(".tab.active");
+    return a ? a.getAttribute("data-tab") : "cap";
+  }
+  // 仅当"活动 Tab"是 AI 且里面有未发送的草稿才算：切走的 Tab 其 DOM 仍驻留（display:none），不能误判为"正在输入"
+  function activeTabHasUnsavedInput() {
+    if (activeTabId() !== "ai") return false;
+    try {
+      var b = document.getElementById("aiBox");
+      if (b && b.value && b.value.trim()) return true;
+      var m = document.getElementById("aiMemInput");
+      if (m && m.value && m.value.trim()) return true;
+    } catch (e) {}
+    return false;
+  }
+  var __deferReload = null; // 后台刷新因活动 Tab 有草稿被推迟时，暂存新数据；草稿清空后立即补刷
+  function flushDeferredReload() {
+    if (!__deferReload) return;
+    if (activeTabHasUnsavedInput()) return;               // 仍有草稿，继续等
+    if (typeof aiBusy !== "undefined" && aiBusy) return;  // AI 请求进行中，别打断
+    var d = __deferReload; __deferReload = null;
+    renderActiveTab(d);
+  }
   // 数据变化时自动重渲染：只问「data.json 最近一次提交的 sha」，变了才下载正文（省 99% 流量）
   function maybeReload() {
     if (!ghToken()) return Promise.resolve(false);
@@ -1546,7 +1640,13 @@
             var d = normalizeData(res.json);
             __data = d;
             renderHeaderStrip(d);
-            renderActiveTab(d);
+            if (activeTabHasUnsavedInput()) {
+              // 活动 Tab 有未发送草稿：本次不重建，避免抹掉用户输入；标记延迟补刷
+              __deferReload = d;
+            } else {
+              renderActiveTab(d);
+              __deferReload = null;
+            }
             __lastGen = d.generatedAt || "";
             __lastSha = res.sha || sha;
             saveDataCache(d);
@@ -1571,7 +1671,7 @@
     var api = "https://api.github.com/repos/" + GH_REPO + "/actions/workflows/sync.yml/dispatches";
     // 在发起请求前记录时间戳，并预留 3 秒缓冲，避免 run 创建时间早于 POST 响应导致漏检
     var afterTs = Date.now() - 3000;
-    fetch(api, {
+    fetchT(api, {
       method: "POST",
       headers: {
         "Authorization": "Bearer " + token,
@@ -1580,7 +1680,7 @@
         "X-GitHub-Api-Version": "2022-11-28"
       },
       body: JSON.stringify({ ref: "main" })
-    }).then(function (r) {
+    }, 15000).then(function (r) {
       if (r.ok) return;
       if (r.status === 401 || r.status === 403) throw new Error("Token 无效或权限不足（需要 repo + workflow 权限，HTTP " + r.status + "）");
       if (r.status === 404) throw new Error("找不到同步工作流（404），请确认仓库/分支名");
@@ -1590,7 +1690,7 @@
       pollUntilSynced(btn, old, 0, afterTs);
     }).catch(function (err) {
       if (btn) { btn.disabled = false; btn.textContent = old; }
-      WB.dialog.alert("立即刷新失败：" + err.message);
+      WB.toast("立即刷新失败：" + err.message, { type: "error", sticky: true });
     });
   }
 
@@ -1599,18 +1699,18 @@
     var MAX = 24; // 24 × 10s ≈ 4 分钟
     if (tries >= MAX) {
       if (btn) { btn.disabled = false; btn.textContent = old; }
-      WB.dialog.alert("同步任务已提交，但本机 Runner 似乎没在运行（任务一直排队）。\n请确认本机 Runner 进程已启动，或稍后手动刷新浏览器。");
+      WB.toast("同步任务已提交，但本机 Runner 似乎没在运行（任务一直排队）。请确认本机 Runner 已启动，或稍后手动刷新浏览器。", { type: "warn", sticky: true });
       loadData().catch(function () {});
       return;
     }
     var runsApi = "https://api.github.com/repos/" + GH_REPO + "/actions/workflows/sync.yml/runs?per_page=10";
-    fetch(runsApi, {
+    fetchT(runsApi, {
       headers: {
         "Authorization": "Bearer " + ghToken(),
         "Accept": "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28"
       }
-    }).then(function (r) { return r.json(); }).then(function (j) {
+    }, 15000).then(function (r) { return r.json(); }).then(function (j) {
       // 取 created_at >= afterTs 的最新一次运行
       var runs = (j.workflow_runs || []).filter(function (x) {
         return new Date(x.created_at).getTime() >= afterTs;
@@ -1624,7 +1724,7 @@
           tightReload(btn, old, 0);
         } else {
           if (btn) { btn.disabled = false; btn.textContent = old; }
-          WB.dialog.alert("本次同步运行失败（" + (run.conclusion || "unknown") + "），请到 GitHub Actions 看日志。");
+          WB.toast("本次同步运行失败（" + (run.conclusion || "unknown") + "），请到 GitHub Actions 看日志。", { type: "error", sticky: true });
           loadData().catch(function () {});
         }
       } else if (run && (run.status === "in_progress" || run.status === "queued" || run.status === "waiting")) {
@@ -1642,7 +1742,7 @@
   function tightReload(btn, old, tries) {
     if (tries >= 30) { // 30 × 10s ≈ 5 分钟，给 GitHub Pages 部署留足时间
       if (btn) { btn.disabled = false; btn.textContent = old; }
-      WB.dialog.alert("本机同步已完成，但 GitHub Pages 上线略有延迟。\n页面会在后台继续检测，30 秒内若数据上线会自动刷新；也可稍后手动刷新浏览器。");
+      WB.toast("本机同步已完成，但 GitHub Pages 上线略有延迟，页面后台继续检测，稍后自动刷新。", { type: "warn", sticky: true });
       return;
     }
     if (btn) btn.textContent = "✅ 同步完成，刷新中… (" + (tries + 1) + "/30)";
@@ -1673,7 +1773,7 @@
 
     var api = "https://api.github.com/repos/" + GH_REPO + "/actions/workflows/sync.yml/dispatches";
     var afterTs = Date.now() - 3000;
-    fetch(api, {
+    fetchT(api, {
       method: "POST",
       headers: {
         "Authorization": "Bearer " + token,
@@ -1682,7 +1782,7 @@
         "X-GitHub-Api-Version": "2022-11-28"
       },
       body: JSON.stringify({ ref: "main" })
-    }).then(function (r) {
+    }, 15000).then(function (r) {
       if (r.ok) return;
       if (r.status === 401 || r.status === 403) throw new Error("Token 无效或权限不足（HTTP " + r.status + "）");
       if (r.status === 404) throw new Error("找不到同步工作流（404）");
@@ -1702,13 +1802,13 @@
       return;
     }
     var runsApi = "https://api.github.com/repos/" + GH_REPO + "/actions/workflows/sync.yml/runs?per_page=10";
-    fetch(runsApi, {
+    fetchT(runsApi, {
       headers: {
         "Authorization": "Bearer " + ghToken(),
         "Accept": "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28"
       }
-    }).then(function (r) { return r.json(); }).then(function (j) {
+    }, 15000).then(function (r) { return r.json(); }).then(function (j) {
       var runs = (j.workflow_runs || []).filter(function (x) {
         return new Date(x.created_at).getTime() >= afterTs;
       }).sort(function (a, b) {
@@ -1750,7 +1850,7 @@
     });
   }
   // ---------- 常用入口（纯前端，本机 localStorage 存，不依赖 data.json） ----------
-  var LINKS_KEY = "wb_links";
+  var LINKS_KEY = KEYS.LINKS;
   var DEFAULT_LINKS = [
     {"label": "抖音", "url": "https://www.douyin.com"},
     {"label": "WorkBuddy 文档", "url": "https://www.workbuddy.cn/docs/"},
@@ -1760,10 +1860,11 @@
     {"label": "本地 Ollama", "url": "http://localhost:11434"}
   ];
   function getLinks() {
-    try { var v = localStorage.getItem(LINKS_KEY); if (v) return JSON.parse(v); } catch (e) {}
+    var v = WB.store(LINKS_KEY, null);
+    if (v && Array.isArray(v)) return v;
     return DEFAULT_LINKS.slice();
   }
-  function saveLinks(a) { try { localStorage.setItem(LINKS_KEY, JSON.stringify(a)); } catch (e) {} }
+  function saveLinks(a) { WB.storeSet(LINKS_KEY, a); }
   function renderLinks() {
     var g = document.getElementById("linksGrid");
     if (!g) return;
@@ -1774,12 +1875,6 @@
         '<span class="li-ic"></span><span class="li-label">' + esc(l.label) + '</span>' +
         '<span class="li-del" data-i="' + i + '" title="删除">✕</span></a>';
     }).join("");
-    Array.prototype.forEach.call(g.querySelectorAll(".li-del"), function (b) {
-      b.addEventListener("click", function (e) {
-        e.preventDefault(); e.stopPropagation();
-        delLink(parseInt(b.getAttribute("data-i"), 10));
-      });
-    });
   }
   function addLink() {
     WB.dialog.prompt("入口名称", "", function (label) {
@@ -1964,9 +2059,30 @@
   });
   // 恢复上次停留的标签页
   var lastTab = "";
-  try { lastTab = localStorage.getItem("wb_tab") || ""; } catch (e) {}
+  lastTab = WB.store(KEYS.TAB, "") || "";
   if (lastTab === "news" || lastTab === "dnews") lastTab = "info"; // 资讯 Tab 合并兼容
   if (lastTab && lastTab !== "cap") switchTab(lastTab);
+
+  // 事件委托：动态列表的内联 onclick / 逐元素绑定收敛到稳定容器上统一监听，
+  // 避免每次 innerHTML 重建后重复绑事件、也消除 AI 记忆列表的内联处理器
+  var aiPanelEl = document.getElementById("col-ai");
+  if (aiPanelEl) {
+    aiPanelEl.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-act='delMem']");
+      if (!b) return;
+      e.preventDefault(); e.stopPropagation();
+      aiMemoryDel(parseInt(b.getAttribute("data-ts"), 10));
+    });
+  }
+  var linksGridEl = document.getElementById("linksGrid");
+  if (linksGridEl) {
+    linksGridEl.addEventListener("click", function (e) {
+      var b = e.target.closest(".li-del");
+      if (!b) return;
+      e.preventDefault(); e.stopPropagation();
+      delLink(parseInt(b.getAttribute("data-i"), 10));
+    });
+  }
 
   // 后台自动刷新：每 30s 检测数据是否更新，有变化就自动重渲染（覆盖每小时自动同步）
   // 页面不可见（切后台标签页）时暂停轮询省流量/电量，回到前台立即补查一次
