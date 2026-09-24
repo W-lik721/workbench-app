@@ -787,6 +787,16 @@ body.light .wk-list::-webkit-scrollbar-thumb{background:rgba(0,0,0,.16)}
 /* ---------- 删除撤销 toast ---------- */
 .undo-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-pill);padding:10px 14px 10px 18px;box-shadow:var(--shadow-lg);font-size:var(--text-sm);color:var(--ink);opacity:1;transition:opacity .25s var(--ease),transform .25s var(--ease);max-width:90vw}
 .undo-toast.hide{opacity:0;transform:translateX(-50%) translateY(10px)}
+/* 统一非阻塞轻提示（WB.toast）：固定底部居中，类型用左侧色条区分，自动消失 */
+.wb-toast-host{position:fixed;left:50%;bottom:72px;transform:translateX(-50%);z-index:90;display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none}
+.wb-toast{pointer-events:auto;display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--sub);border-radius:var(--radius-pill);padding:10px 14px 10px 18px;box-shadow:var(--shadow-lg);font-size:var(--text-sm);color:var(--ink);max-width:92vw;opacity:0;transform:translateY(10px);transition:opacity .25s var(--ease),transform .25s var(--ease)}
+.wb-toast.show{opacity:1;transform:translateY(0)}
+.wb-toast-success{border-left-color:var(--green,#2e9e5b)}
+.wb-toast-info{border-left-color:var(--accent,#3b82f6)}
+.wb-toast-warn{border-left-color:var(--amber,#e0a106)}
+.wb-toast-error{border-left-color:var(--red,#e5484d)}
+.wb-toast-x{margin-left:4px;background:none;border:none;color:var(--sub);font-size:18px;line-height:1;cursor:pointer;padding:0 2px}
+.wb-toast-x:hover{color:var(--ink)}
 .undo-btn{font:inherit;font-weight:600;color:var(--accent);background:transparent;border:1px solid var(--accent);border-radius:var(--radius-pill);padding:5px 16px;cursor:pointer;flex:none}
 .undo-btn:hover{background:var(--tint)}
 .undo-btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
