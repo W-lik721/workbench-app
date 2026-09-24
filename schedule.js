@@ -30,6 +30,18 @@
       return new TextDecoder("utf-8").decode(bytes);
     } catch (e) { return decodeURIComponent(escape(bin)); }
   }
+  // 带超时 fetch：防止 api.github.com 网络挂起导致页面卡在「加载中…」（与 app.js 的 fetchT 同思路，本文件自包含）
+  function fetchTO(url, opts, ms) {
+    ms = ms || 15000;
+    var ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
+    var o = opts || {};
+    if (ctrl) o.signal = ctrl.signal;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, ms);
+    return fetch(url, o).then(
+      function (r) { clearTimeout(timer); return r; },
+      function (e) { clearTimeout(timer); throw e; }
+    );
+  }
   // ---------- 私有仓数据通道（2026-09-15 方案 C）----------
   // 站点改成发布到公开仓，data.json / schedule.json 留在私有仓，
   // 由浏览器带 Token 走 Contents API 现取（api.github.com 支持 CORS）。
@@ -38,7 +50,7 @@
     if (!ghToken()) return Promise.reject(new Error("NONTOKEN"));
     branch = branch || "main";
     var url = GH_CONTENTS + path + "?ref=" + encodeURIComponent(branch) + "&t=" + Date.now();
-    return fetch(url, { cache: "no-store", headers: ghHeaders() })
+    return fetchTO(url, { cache: "no-store", headers: ghHeaders() }, 15000)
       .then(function (r) {
         if (!r.ok) throw new Error("HTTP " + r.status + " @" + path + "#" + branch);
         return r.json();
@@ -48,7 +60,7 @@
           return { json: JSON.parse(ghB64ToText(meta.content)), sha: meta.sha || "", branch: branch };
         }
         if (meta && meta.download_url) {
-          return fetch(meta.download_url, { cache: "no-store", headers: ghHeaders() })
+          return fetchTO(meta.download_url, { cache: "no-store", headers: ghHeaders() }, 15000)
             .then(function (rr) {
               if (!rr.ok) throw new Error("HTTP " + rr.status + " @raw " + path);
               return rr.json();
@@ -64,7 +76,7 @@
     branch = branch || "main";
     var url = "https://api.github.com/repos/" + GH_REPO + "/commits?path=" +
       encodeURIComponent(path) + "&sha=" + encodeURIComponent(branch) + "&per_page=1&t=" + Date.now();
-    return fetch(url, { cache: "no-store", headers: ghHeaders() })
+    return fetchTO(url, { cache: "no-store", headers: ghHeaders() }, 15000)
       .then(function (r) {
         if (!r.ok) throw new Error("HTTP " + r.status + " @commits");
         return r.json();
@@ -95,13 +107,13 @@
     var list = scheduleLoad();
     var body = b64encodeUtf8(JSON.stringify(list, null, 2));
     var put = function (sha) {
-      return fetch(GH_API, {
+      return fetchTO(GH_API, {
         method: "PUT",
         headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" },
         body: JSON.stringify({ message: "chore: update schedule from workbench", content: body, sha: sha })
-      });
+      }, 15000);
     };
-    fetch(GH_API, { headers: { "Authorization": "Bearer " + token } })
+    fetchTO(GH_API, { headers: { "Authorization": "Bearer " + token } }, 15000)
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (meta) { return put(meta && meta.sha ? meta.sha : undefined); })
       .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
